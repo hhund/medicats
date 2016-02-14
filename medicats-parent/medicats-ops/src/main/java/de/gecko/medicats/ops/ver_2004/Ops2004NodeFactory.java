@@ -11,7 +11,7 @@ import de.gecko.medicats.ops.sgml.SgmlOpsNode;
 public class Ops2004NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsNodeFactory
 {
 	private static final String SGML_RESOURCE_FILENAME = "OP301.SGM";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "umsteiger.txt";
+	private static final String UMSTEIGER_RESOURCE_FILENAME = "Umsteiger.txt";
 	private static final String PREVIOUS_VERSION = "ops21";
 	private static final String VERSION = "ops2004";
 
@@ -72,13 +72,13 @@ public class Ops2004NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	@Override
 	protected Path getTransitionZipFileName(Path basePath)
 	{
-		return basePath.resolve("p1ueb2004_2005_v10.zip");
+		return basePath.resolve("p1ueb21_2004_v10.zip");
 	}
 
 	@Override
 	protected long getTransitionZipChecksum()
 	{
-		return 3283081517L;
+		return 2134434348L;
 	}
 
 	@Override
