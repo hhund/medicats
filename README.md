@@ -1,7 +1,9 @@
 # medicats
 medical classification and terminology systems library for java 1.8
 
-The following classification and terminology systems are currently supported by medicats:
+#### Supported classifications and terminologies
+
+The following classification and terminologies are currently supported by medicats
 
 ##### ICD 10
 SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015
@@ -11,6 +13,8 @@ SGB-V 2.0, SGB-v, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 201
 
 ##### Alpha-ID
 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
+
+#### Usage
 
 In order to use this library you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path".
 The default value for this property is "dimdi". The property can be changed via runtime flag or source code:
