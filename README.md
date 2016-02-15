@@ -16,7 +16,7 @@ SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 201
 
 #### Usage
 
-In order to use this library you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path".
+In order to use this library you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path". **Do not unpack or modify the downloaded zip-files.**
 The default value for this property is "dimdi". The property can be changed via runtime flag or source code:
 
 ```
