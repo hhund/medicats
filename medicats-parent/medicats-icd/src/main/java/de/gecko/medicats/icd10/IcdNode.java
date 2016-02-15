@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.gecko.medicats.Node;
+import de.gecko.medicats.VersionedNode;
 
-public abstract class IcdNode implements Node<IcdNode>
+public abstract class IcdNode implements VersionedNode<IcdNode>
 {
 	public enum IcdNodeType
 	{
@@ -77,8 +78,6 @@ public abstract class IcdNode implements Node<IcdNode>
 	private final List<IcdNode> children = new ArrayList<>();
 	private final IcdNode parent;
 
-	private Object extraData;
-
 	public IcdNode(IcdNode parent)
 	{
 		this.parent = parent;
@@ -142,11 +141,13 @@ public abstract class IcdNode implements Node<IcdNode>
 		return getCode().length();
 	}
 
+	@Override
 	public String getPreviousVersion()
 	{
 		return getParent().getPreviousVersion();
 	}
 
+	@Override
 	public String getVersion()
 	{
 		return getParent().getVersion();
@@ -162,33 +163,21 @@ public abstract class IcdNode implements Node<IcdNode>
 		return getParent().getPreviousCodes();
 	}
 
-	/**
-	 * @return might be <code>null</code>
-	 */
-	public IcdNode getPrevious()
+	@Override
+	public Optional<IcdNode> getPrevious()
 	{
-		// if (!hasPreviousCode())
-		// return null;
-		//
-		// if (getPreviousNodeWalker() != null)
-		// return getPreviousNodeWalker().getNodeByCode(getPreviousCode());
-		// else
-		// return null;
-
 		if (getPreviousNodeWalker() == null)
-			return null;
+			return Optional.empty();
 
-		IcdNode previous = null;
-		if (getPreviousCode() != null)
-			previous = getPreviousNodeWalker().getNodeByCode(getPreviousCode());
+		Optional<IcdNode> previous = getPreviousNodeWalker().getNodeByCode(getPreviousCode());
 
 		// if not found by previous code, try this code and check label
 		// unchanged
-		if (previous == null)
+		if (!previous.isPresent())
 		{
 			IcdNode sameCodePrevious = getPreviousNodeWalker().getNodeByCode(getCode());
 			if (sameCodePrevious != null && sameCodePrevious.getLabel().equals(getLabel()))
-				previous = sameCodePrevious;
+				previous = Optional.of(sameCodePrevious);
 		}
 
 		return previous;
@@ -199,12 +188,10 @@ public abstract class IcdNode implements Node<IcdNode>
 		return getParent().getPreviousNodeWalker();
 	}
 
-	/**
-	 * @return may be <code>null</code>
-	 */
-	public String getPreviousCode()
+	@Override
+	public Optional<String> getPreviousCode()
 	{
-		return getPreviousCodes().get(getCode());
+		return Optional.ofNullable(getPreviousCodes().get(getCode()));
 	}
 
 	public final Stream<IcdNode> getInclusions(Function<String, List<? extends IcdNode>> byCode)
@@ -241,16 +228,6 @@ public abstract class IcdNode implements Node<IcdNode>
 	public String toString()
 	{
 		return getCode() + getNodeUsage().getIcon() + " " + getLabel();
-	}
-
-	public void setExtraData(Object extraData)
-	{
-		this.extraData = extraData;
-	}
-
-	public Object getExtraData()
-	{
-		return extraData;
 	}
 
 	protected List<IcdNode> wrappIfUsageDifferent(List<? extends IcdNode> toWrapp, IcdNodeUsage usage)

@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.gecko.medicats.Node;
+import de.gecko.medicats.VersionedNode;
 import de.gecko.medicats.icd10.IcdNode;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeUsage;
 import de.gecko.medicats.icd10.IcdNodeWalker;
 import de.gecko.medicats.icd10.IcdNodeWrapper;
 
-public class AlphaIdNode implements Node<AlphaIdNode>
+public class AlphaIdNode implements VersionedNode<AlphaIdNode>
 {
 	private final AlphaIdNode parent;
 
@@ -94,6 +95,12 @@ public class AlphaIdNode implements Node<AlphaIdNode>
 		return alphaId;
 	}
 
+	@Override
+	public Optional<String> getPreviousCode()
+	{
+		return Optional.ofNullable(getAlphaId());
+	}
+
 	public boolean isValid()
 	{
 		return valid;
@@ -114,17 +121,18 @@ public class AlphaIdNode implements Node<AlphaIdNode>
 		return additionalIcdCode;
 	}
 
-	public AlphaIdNode getPrevious()
+	@Override
+	public Optional<AlphaIdNode> getPrevious()
 	{
 		if (getAlphaId() == null)
-			return null;
+			return Optional.empty();
 
 		AlphaIdNodeWalker walker = getPreviousAlphaIdNodeWalker();
 
 		if (walker == null)
-			return null;
+			return Optional.empty();
 
-		return walker.getNodeByCode(getAlphaId());
+		return walker.getNodeByCode(getPreviousCode());
 	}
 
 	public IcdNode getPrimaryIcdNode()

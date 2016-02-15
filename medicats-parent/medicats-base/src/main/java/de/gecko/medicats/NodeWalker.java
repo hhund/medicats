@@ -2,12 +2,18 @@ package de.gecko.medicats;
 
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface NodeWalker<N extends Node<N>>
 {
 	N getRootNode();
+
+	default Optional<N> getNodeByCode(Optional<String> code)
+	{
+		return code.map(c -> getNodesByCode().get(c));
+	}
 
 	/**
 	 * @param code

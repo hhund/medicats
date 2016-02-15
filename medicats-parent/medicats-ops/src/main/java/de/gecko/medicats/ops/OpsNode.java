@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.gecko.medicats.Node;
+import de.gecko.medicats.VersionedNode;
 
-public abstract class OpsNode implements Node<OpsNode>
+public abstract class OpsNode implements VersionedNode<OpsNode>
 {
 	public enum OpsNodeType
 	{
@@ -92,17 +93,16 @@ public abstract class OpsNode implements Node<OpsNode>
 		return getCode().length();
 	}
 
+	@Override
 	public String getPreviousVersion()
 	{
 		return getParent().getPreviousVersion();
 	}
 
-	/**
-	 * @return may be <code>null</code>
-	 */
-	public String getPreviousCode()
+	@Override
+	public Optional<String> getPreviousCode()
 	{
-		return getPreviousCodes().get(getCode());
+		return Optional.ofNullable(getPreviousCodes().get(getCode()));
 	}
 
 	protected Map<String, String> getPreviousCodes()
@@ -115,30 +115,27 @@ public abstract class OpsNode implements Node<OpsNode>
 		return getParent().getPreviousNodeWalker();
 	}
 
-	/**
-	 * @return might be <code>null</code>
-	 */
-	public OpsNode getPrevious()
+	@Override
+	public Optional<OpsNode> getPrevious()
 	{
 		if (getPreviousNodeWalker() == null)
-			return null;
+			return Optional.empty();
 
-		OpsNode previous = null;
-		if (getPreviousCode() != null)
-			previous = getPreviousNodeWalker().getNodeByCode(getPreviousCode());
+		Optional<OpsNode> previous = getPreviousNodeWalker().getNodeByCode(getPreviousCode());
 
 		// if not found by previous code, try this code and check label
 		// unchanged
-		if (previous == null)
+		if (!previous.isPresent())
 		{
 			OpsNode sameCodePrevious = getPreviousNodeWalker().getNodeByCode(getCode());
 			if (sameCodePrevious != null && sameCodePrevious.getLabel().equals(getLabel()))
-				previous = sameCodePrevious;
+				previous = Optional.of(sameCodePrevious);
 		}
 
 		return previous;
 	}
 
+	@Override
 	public String getVersion()
 	{
 		return getParent().getVersion();

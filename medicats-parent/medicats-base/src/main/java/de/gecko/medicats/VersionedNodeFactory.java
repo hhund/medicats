@@ -5,16 +5,16 @@ import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 
-public interface VersionedNodeFactory<N extends Node<N>, W extends NodeWalker<N>> extends NodeFactory<N, W>
+public interface VersionedNodeFactory<N extends VersionedNode<N>, W extends NodeWalker<N>> extends NodeFactory<N, W>
 {
 	String getVersion();
 
 	int getSortIndex();
 
 	boolean supportsVersion(String version);
-	
+
 	String getPreviousVersion();
-	
+
 	strictfp static Path testChecksum(long expectedChecksum, Path file)
 	{
 		try
