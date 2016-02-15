@@ -14,6 +14,10 @@ SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 201
 ##### Alpha-ID
 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
 
+#### License
+
+medicats is open source under the Apache License - Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+
 #### Usage
 
 In order to use this library you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path". **Do not unpack or modify the downloaded zip-files.**
