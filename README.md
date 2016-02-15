@@ -1,5 +1,5 @@
 # medicats
-medical classification and terminology systems library for java 1.8
+Medical classification and terminology systems library for Java 1.8
 
 #### Supported classifications and terminologies
 
@@ -9,7 +9,7 @@ The following classification and terminologies are currently supported by medica
 SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015
 
 ##### OPS
-SGB-V 2.0, SGB-v, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
+SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
 
 ##### Alpha-ID
 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
