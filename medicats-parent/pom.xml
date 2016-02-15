@@ -6,6 +6,20 @@
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<organization>
+		<name>GECKO Institut für Medizin, Informatik und Ökonomie, Hochschule Heilbronn</name>
+		<url>https://www.gecko.hs-heilbronn.de/</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
 	<modules>
 		<module>medicats-base</module>
 		<module>medicats-claml</module>
