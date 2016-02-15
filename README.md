@@ -20,6 +20,12 @@ medicats is open source under the Apache License - Version 2.0: http://www.apach
 
 #### Usage
 
+Checkout medicats-parent and run maven install using maven version >= 3 (https://maven.apache.org):
+
+```
+mvn install
+```
+
 In order to use this library you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path". **Do not unpack or modify the downloaded zip-files.**
 The default value for this property is "dimdi". The property can be changed via runtime flag or source code:
 
