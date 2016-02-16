@@ -20,11 +20,15 @@ medicats is open source under the Apache License - Version 2.0: http://www.apach
 
 #### Usage
 
+##### Compiling medicats
+
 Checkout medicats-parent and run maven install using maven version >= 3 (https://maven.apache.org):
 
 ```
 mvn install
 ```
+
+##### Runtime Dependencies
 
 In order to use this library you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path". **Do not unpack or modify the downloaded zip-files.**
 The default value for this property is "dimdi". The property can be changed via runtime flag or source code:
@@ -35,6 +39,29 @@ java -Ddimdi.files.path="special/folder" -jar foo.jar
 
 ```java
 System.setProperty("dimdi.files.path", "special/folder");
+```
+
+##### Example Usage
+
+```java
+import de.gecko.medicats.icd10.IcdNode;
+import de.gecko.medicats.icd10.IcdNodeFactory;
+import de.gecko.medicats.icd10.IcdNodeWalker;
+import de.gecko.medicats.icd10.IcdService;
+
+public class Example
+{
+	public static void main(String[] args)
+	{
+		IcdService icdService = IcdService.getService();
+		
+		IcdNodeFactory nodeFactory = icdService.getNodeFactory("icd10gm2015");
+		
+		IcdNodeWalker nodeWalker = nodeFactory.createNodeWalker();
+		
+		IcdNode dilatedCardiomyopathy = nodeWalker.getNodeByCode("I42.0");
+	}
+}
 ```
 
 #### Download Links DIMDI
