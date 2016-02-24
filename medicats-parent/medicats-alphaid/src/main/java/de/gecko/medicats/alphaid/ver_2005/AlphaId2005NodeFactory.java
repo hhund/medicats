@@ -1,46 +1,61 @@
-package de.gecko.medicats.alphaid.vers_2014;
+package de.gecko.medicats.alphaid.ver_2005;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import de.gecko.medicats.alphaid.AbstractAlphaIdNodeFactory;
 import de.gecko.medicats.alphaid.AlphaIdNode;
 import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
+import de.gecko.medicats.alphaid.AlphaIdNodeRoot;
 
-public class AlphaId2014NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
+public class AlphaId2005NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
 	@Override
 	public String getVersion()
 	{
-		return "alphaid2014";
+		return "alphaid2005";
 	}
 
 	@Override
 	public String getPreviousVersion()
 	{
-		return "alphaid2013";
+		return "alphaid2004";
 	}
 
 	@Override
 	public String getIcdVersion()
 	{
-		return "icd10gm2014";
+		return "icd10gm2005";
 	}
 
 	@Override
 	public int getSortIndex()
 	{
-		return 2014;
+		return 2005;
 	}
 
 	@Override
 	protected String getDataFileName()
 	{
-		return "icd10gm2014_alphaid_edvascii_20130930.txt";
+		return "dimdi-idt2005.txt";
+	}
+
+	@Override
+	protected CSVFormat createCsvFormat()
+	{
+		return CSVFormat.newFormat(';');
+	}
+
+	@Override
+	protected boolean skipNode(AlphaIdNodeRoot root, CSVRecord t)
+	{
+		if (t.size() < 6)
+			return true;
+		else
+			return super.skipNode(root, t);
 	}
 
 	@Override
@@ -59,24 +74,18 @@ public class AlphaId2014NodeFactory extends AbstractAlphaIdNodeFactory implement
 	@Override
 	protected Path getTaxonomyZipFileName(Path basePath)
 	{
-		return basePath.resolve("alphaid2014.zip");
+		return basePath.resolve("dimdi-idt2005.zip");
 	}
 
 	@Override
 	protected long getTaxonomyZipChecksum()
 	{
-		return 863994774L;
+		return 2007174286L;
 	}
 
 	@Override
 	protected Path getDataFileResourcePath(FileSystem taxonomyZip)
 	{
 		return taxonomyZip.getPath(getDataFileName());
-	}
-
-	@Override
-	protected Charset getDataFileEncoding()
-	{
-		return StandardCharsets.UTF_8;
 	}
 }

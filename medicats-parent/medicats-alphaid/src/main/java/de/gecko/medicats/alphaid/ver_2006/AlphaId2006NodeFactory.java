@@ -1,46 +1,51 @@
-package de.gecko.medicats.alphaid.vers_2011;
+package de.gecko.medicats.alphaid.ver_2006;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import de.gecko.medicats.alphaid.AbstractAlphaIdNodeFactory;
 import de.gecko.medicats.alphaid.AlphaIdNode;
 import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
 
-public class AlphaId2011NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
+public class AlphaId2006NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
 	@Override
 	public String getVersion()
 	{
-		return "alphaid2011";
+		return "alphaid2006";
 	}
 
 	@Override
 	public String getPreviousVersion()
 	{
-		return "alphaid2010";
+		return "alphaid2005";
 	}
 
 	@Override
 	public String getIcdVersion()
 	{
-		return "icd10gm2011";
+		return "icd10gm2006";
 	}
 
 	@Override
 	public int getSortIndex()
 	{
-		return 2011;
+		return 2006;
 	}
 
 	@Override
 	protected String getDataFileName()
 	{
-		return "icd10gm2011_alphaid_edv_ascii20101117.txt";
+		return "alphaid-2006.txt";
+	}
+
+	@Override
+	protected CSVFormat createCsvFormat()
+	{
+		return CSVFormat.newFormat(';');
 	}
 
 	@Override
@@ -59,24 +64,18 @@ public class AlphaId2011NodeFactory extends AbstractAlphaIdNodeFactory implement
 	@Override
 	protected Path getTaxonomyZipFileName(Path basePath)
 	{
-		return basePath.resolve("alphaid2011.zip");
+		return basePath.resolve("alphaid-2006.zip");
 	}
 
 	@Override
 	protected long getTaxonomyZipChecksum()
 	{
-		return 2146716224L;
+		return 485784230L;
 	}
 
 	@Override
 	protected Path getDataFileResourcePath(FileSystem taxonomyZip)
 	{
 		return taxonomyZip.getPath(getDataFileName());
-	}
-
-	@Override
-	protected Charset getDataFileEncoding()
-	{
-		return StandardCharsets.UTF_8;
 	}
 }

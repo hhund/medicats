@@ -1,4 +1,4 @@
-package de.gecko.medicats.alphaid.vers_2006;
+package de.gecko.medicats.alphaid.ver_2007;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
@@ -10,36 +10,36 @@ import de.gecko.medicats.alphaid.AbstractAlphaIdNodeFactory;
 import de.gecko.medicats.alphaid.AlphaIdNode;
 import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
 
-public class AlphaId2006NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
+public class AlphaId2007NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
 	@Override
 	public String getVersion()
 	{
-		return "alphaid2006";
+		return "alphaid2007";
 	}
 
 	@Override
 	public String getPreviousVersion()
 	{
-		return "alphaid2005";
+		return "alphaid2006";
 	}
 
 	@Override
 	public String getIcdVersion()
 	{
-		return "icd10gm2006";
+		return "icd10gm2007";
 	}
 
 	@Override
 	public int getSortIndex()
 	{
-		return 2006;
+		return 2007;
 	}
 
 	@Override
 	protected String getDataFileName()
 	{
-		return "alphaid-2006.txt";
+		return "icd10gm2007_alphaid_edv_ascii20061017.txt";
 	}
 
 	@Override
@@ -64,13 +64,13 @@ public class AlphaId2006NodeFactory extends AbstractAlphaIdNodeFactory implement
 	@Override
 	protected Path getTaxonomyZipFileName(Path basePath)
 	{
-		return basePath.resolve("alphaid-2006.zip");
+		return basePath.resolve("alphaid2007.zip");
 	}
 
 	@Override
 	protected long getTaxonomyZipChecksum()
 	{
-		return 485784230L;
+		return 2514614868L;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package de.gecko.medicats.alphaid.vers_2015;
+package de.gecko.medicats.alphaid.ver_2015;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
