@@ -22,6 +22,7 @@ import de.gecko.medicats.icd10.IcdNode.IcdNodeUsage;
 public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 {
 	private Element[] chapters;
+	private SgmlIcdNodeRoot root;
 
 	protected abstract String[] getChapterFileNames();
 
@@ -54,7 +55,7 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 	 *            [1 .. {@link #chapterCount()}]
 	 * @return
 	 */
-	protected Element getChapter(int chapter)
+	protected synchronized Element getChapter(int chapter)
 	{
 		if (chapter < 1 || chapter > chapterCount())
 			throw new IndexOutOfBoundsException();
@@ -66,13 +67,17 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 	}
 
 	@Override
-	public SgmlIcdNodeRoot getRootNode()
+	public synchronized SgmlIcdNodeRoot getRootNode()
 	{
-		SgmlIcdNodeRoot root = new SgmlIcdNodeRoot(getVersion(), getSortIndex(), getPreviousCodes(),
-				getPreviousVersion());
+		if (root == null)
+		{
+			SgmlIcdNodeRoot root = new SgmlIcdNodeRoot(getVersion(), getSortIndex(), getPreviousCodes(),
+					getPreviousVersion());
 
-		parseChapters(root);
+			parseChapters(root);
 
+			this.root = root;
+		}
 		return root;
 	}
 

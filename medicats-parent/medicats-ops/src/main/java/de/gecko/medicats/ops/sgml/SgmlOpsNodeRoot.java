@@ -1,7 +1,6 @@
 package de.gecko.medicats.ops.sgml;
 
-import java.util.Map;
-
+import de.gecko.medicats.PreviousCodeMappings;
 import de.gecko.medicats.ops.OpsNodeFactory;
 import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.OpsService;
@@ -9,18 +8,18 @@ import de.gecko.medicats.ops.OpsService;
 public class SgmlOpsNodeRoot extends SgmlOpsNode
 {
 	private final String version;
-	private final Map<String, String> previousCodes;
+	private final PreviousCodeMappings mappings;
 	private final String previousVersion;
 
 	private OpsNodeWalker previousNodeWalker;
 	private boolean previouseCodeSupported = true;
 
-	public SgmlOpsNodeRoot(String version, Map<String, String> previousCodes, String previousVersion)
+	public SgmlOpsNodeRoot(String version, PreviousCodeMappings mappings, String previousVersion)
 	{
 		super(null, null, "ROOT", "ROOT", OpsNodeType.ROOT, null, null);
 
 		this.version = version;
-		this.previousCodes = previousCodes;
+		this.mappings = mappings;
 		this.previousVersion = previousVersion;
 	}
 
@@ -31,9 +30,9 @@ public class SgmlOpsNodeRoot extends SgmlOpsNode
 	}
 
 	@Override
-	protected Map<String, String> getPreviousCodes()
+	protected PreviousCodeMappings getPreviousCodes()
 	{
-		return previousCodes;
+		return mappings;
 	}
 
 	@Override

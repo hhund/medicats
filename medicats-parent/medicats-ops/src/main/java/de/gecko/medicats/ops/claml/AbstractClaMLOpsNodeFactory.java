@@ -24,6 +24,7 @@ import de.gecko.medicats.ops.AbstractOpsNodeFactory;
 public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 {
 	private ClaML claML;
+	private ClaMLOpsNodeRoot root;
 
 	protected abstract String getXmlResourceFileName();
 
@@ -64,25 +65,30 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 	}
 
 	@Override
-	public ClaMLOpsNodeRoot getRootNode()
+	public synchronized ClaMLOpsNodeRoot getRootNode()
 	{
-		ClaML claML = getClaML();
-		ClaMLOpsNodeRoot root = new ClaMLOpsNodeRoot(claML, getVersion(), getPreviousCodes(), getPreviousVersion());
+		if (root == null)
+		{
+			ClaML claML = getClaML();
+			ClaMLOpsNodeRoot root = new ClaMLOpsNodeRoot(claML, getVersion(), getPreviousCodes(), getPreviousVersion());
 
-		Optional<ClaMLClassKind> chapterKind = claML.getClaMLClassKinds().getClaMLClassKinds().stream()
-				.filter(k -> "chapter".equals(k.getName())).findFirst();
+			Optional<ClaMLClassKind> chapterKind = claML.getClaMLClassKinds().getClaMLClassKinds().stream()
+					.filter(k -> "chapter".equals(k.getName())).findFirst();
 
-		List<ClaMLClass> chapters = claML.getClaMLClasses().stream().filter(c -> c.getKind().equals(chapterKind.get()))
-				.collect(Collectors.toList());
+			List<ClaMLClass> chapters = claML.getClaMLClasses().stream()
+					.filter(c -> c.getKind().equals(chapterKind.get())).collect(Collectors.toList());
 
-		Map<String, ClaMLClass> clamlClassesByCode = claML.getClaMLClasses().parallelStream()
-				.collect(Collectors.toMap(c -> c.getCode(), Function.identity()));
+			Map<String, ClaMLClass> clamlClassesByCode = claML.getClaMLClasses().parallelStream()
+					.collect(Collectors.toMap(c -> c.getCode(), Function.identity()));
 
-		Map<String, List<ModifierClass>> modifierClassesByModifier = claML.getModifierClasses().stream()
-				.collect(Collectors.groupingBy(c -> c.getModifier()));
+			Map<String, List<ModifierClass>> modifierClassesByModifier = claML.getModifierClasses().stream()
+					.collect(Collectors.groupingBy(c -> c.getModifier()));
 
-		for (ClaMLClass chapter : chapters)
-			createOpsNodes(root, chapter, clamlClassesByCode, modifierClassesByModifier);
+			for (ClaMLClass chapter : chapters)
+				createOpsNodes(root, chapter, clamlClassesByCode, modifierClassesByModifier);
+
+			this.root = root;
+		}
 
 		return root;
 	}

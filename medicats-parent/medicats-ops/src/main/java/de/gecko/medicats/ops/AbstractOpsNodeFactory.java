@@ -9,15 +9,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Map;
+
+import de.gecko.medicats.PreviousCodeMappings;
 
 public abstract class AbstractOpsNodeFactory implements OpsNodeFactory
 {
 	public static final String DIMDI_FILES_BASE_PATH_PARAM = "dimdi.files.path";
 	public static final String DIMDI_FILES_BASE_PATH_DEFAULT_VALUE = "dimdi";
 
-	private Map<String, String> previousCodes;
+	private PreviousCodeMappings mappings;
 
 	private FileSystem taxonomyZip, transitionZip;
 
@@ -93,7 +93,7 @@ public abstract class AbstractOpsNodeFactory implements OpsNodeFactory
 	/**
 	 * @return 0-based index
 	 */
-	protected int getPreviousCodesPreviousColumn()
+	protected int getPreviousCodesColumn()
 	{
 		return 0;
 	}
@@ -101,27 +101,43 @@ public abstract class AbstractOpsNodeFactory implements OpsNodeFactory
 	/**
 	 * @return 0-based index
 	 */
-	protected int getPreviousCodesCurrentColumn()
+	protected int getCurrentCodesColumn()
 	{
 		return 2;
 	}
 
+	/**
+	 * @return 0-based index
+	 */
+	protected int getCurrentCodesBackwardsCompatibleColumn()
+	{
+		return 6;
+	}
+
+	/**
+	 * @return 0-based index
+	 */
+	protected int getPreviousCodesForwardsCompatibleColumn()
+	{
+		return 5;
+	}
+
 	protected abstract String getPreviousCodesFileName();
 
-	protected Map<String, String> getPreviousCodes()
+	protected PreviousCodeMappings getPreviousCodes()
 	{
-		if (previousCodes == null)
+		if (mappings == null)
 		{
 			InputStream transitionFileStream = getTransitionFileStream();
 
 			if (transitionFileStream == null)
-				previousCodes = Collections.emptyMap();
+				mappings = new PreviousCodeMappings(null);
 			else
-				previousCodes = PreviousOpsCodesReader.read(transitionFileStream, getPreviousCodesPreviousColumn(),
-						getPreviousCodesCurrentColumn());
+				mappings = PreviousOpsCodesReader.read(transitionFileStream, getPreviousCodesColumn(),
+						getCurrentCodesColumn(), getPreviousCodesForwardsCompatibleColumn(), getCurrentCodesBackwardsCompatibleColumn());
 		}
 
-		return previousCodes;
+		return mappings;
 	}
 
 	@Override

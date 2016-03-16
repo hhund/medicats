@@ -11,6 +11,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.gecko.medicats.PreviousCodeMapping;
+import de.gecko.medicats.PreviousCodeMappings;
 import de.gecko.medicats.VersionedNode;
 
 public abstract class OpsNode implements VersionedNode<OpsNode>
@@ -100,12 +102,12 @@ public abstract class OpsNode implements VersionedNode<OpsNode>
 	}
 
 	@Override
-	public Optional<String> getPreviousCode()
+	public Optional<PreviousCodeMapping> getPreviousMapping()
 	{
-		return Optional.ofNullable(getPreviousCodes().get(getCode()));
+		return getPreviousCodes().get(getCode());
 	}
 
-	protected Map<String, String> getPreviousCodes()
+	protected PreviousCodeMappings getPreviousCodes()
 	{
 		return getParent().getPreviousCodes();
 	}
@@ -121,7 +123,7 @@ public abstract class OpsNode implements VersionedNode<OpsNode>
 		if (getPreviousNodeWalker() == null)
 			return Optional.empty();
 
-		Optional<OpsNode> previous = getPreviousNodeWalker().getNodeByCode(getPreviousCode());
+		Optional<OpsNode> previous = getPreviousNodeWalker().getNodeByCode(getPreviousMapping());
 
 		// if not found by previous code, try this code and check label
 		// unchanged

@@ -45,6 +45,12 @@ public class Ops2005NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	}
 
 	@Override
+	protected int getCurrentCodesBackwardsCompatibleColumn()
+	{
+		return Integer.MIN_VALUE;
+	}
+
+	@Override
 	public OpsNodeWalker createNodeWalker()
 	{
 		return new Ops2005NodeWalker(getRootNode());

@@ -9,15 +9,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Map;
+
+import de.gecko.medicats.PreviousCodeMappings;
 
 public abstract class AbstractIcdNodeFactory implements IcdNodeFactory
 {
 	public static final String DIMDI_FILES_BASE_PATH_PARAM = "dimdi.files.path";
 	public static final String DIMDI_FILES_BASE_PATH_DEFAULT_VALUE = "dimdi";
 
-	private Map<String, String> previousCodes;
+	private PreviousCodeMappings mappings;
 
 	private FileSystem taxonomyZip, transitionZip;
 
@@ -92,19 +92,19 @@ public abstract class AbstractIcdNodeFactory implements IcdNodeFactory
 
 	protected abstract String getPreviousCodesFileName();
 
-	protected Map<String, String> getPreviousCodes()
+	protected PreviousCodeMappings getPreviousCodes()
 	{
-		if (previousCodes == null)
+		if (mappings == null)
 		{
 			InputStream transitionFileStream = getTransitionFileStream();
 
 			if (transitionFileStream == null)
-				previousCodes = Collections.emptyMap();
+				mappings = new PreviousCodeMappings(null);
 			else
-				previousCodes = PreviousIcdCodesReader.read(transitionFileStream);
+				mappings = PreviousIcdCodesReader.read(transitionFileStream);
 		}
 
-		return previousCodes;
+		return mappings;
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import de.gecko.medicats.ops.sgml.AbstractSgmlOpsNodeFactory;
 public class Ops20NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsNodeFactory
 {
 	private static final String SGML_RESOURCE_FILENAME = "OP301.sgm";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = null;
 	private static final String PREVIOUS_VERSION = "ops11";
 	private static final String VERSION = "ops20";
 
@@ -41,7 +40,7 @@ public class Ops20NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsN
 	@Override
 	protected String getPreviousCodesFileName()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return null;
 	}
 
 	@Override

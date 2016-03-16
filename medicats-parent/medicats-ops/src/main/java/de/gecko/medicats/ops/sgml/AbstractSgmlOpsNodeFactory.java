@@ -20,6 +20,8 @@ import de.gecko.medicats.ops.OpsNode.OpsNodeType;
 
 public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 {
+	private SgmlOpsNodeRoot root;
+
 	protected abstract String getSgmlFileName();
 
 	protected abstract Path getSgmlFileNamePath(FileSystem taxonomyZip);
@@ -37,21 +39,26 @@ public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 	}
 
 	@Override
-	public OpsNode getRootNode()
+	public synchronized OpsNode getRootNode()
 	{
-		SgmlOpsNodeRoot root = new SgmlOpsNodeRoot(getVersion(), getPreviousCodes(), getPreviousVersion());
-
-		try
+		if (root == null)
 		{
-			Element rootElement = OpsSgmlReader.read(getSgmlInputStream());
-			List<Element> kaps = getElementsByTagName(rootElement, "KAP");
+			SgmlOpsNodeRoot root = new SgmlOpsNodeRoot(getVersion(), getPreviousCodes(), getPreviousVersion());
 
-			for (Element kap : kaps)
-				parseKap(root, kap);
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
+			try
+			{
+				Element rootElement = OpsSgmlReader.read(getSgmlInputStream());
+				List<Element> kaps = getElementsByTagName(rootElement, "KAP");
+
+				for (Element kap : kaps)
+					parseKap(root, kap);
+			}
+			catch (IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+
+			this.root = root;
 		}
 
 		return root;
@@ -190,7 +197,7 @@ public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 		String code = getTextContentCleaned(fcode);
 
 		label = fixFstLabel(label, code, parent);
-		
+
 		List<String> inclusions = new ArrayList<>();
 		List<String> exclusions = new ArrayList<>();
 
@@ -226,7 +233,7 @@ public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 		String code = getTextContentCleaned(scode);
 
 		label = fixSstLabel(label, code, parent);
-		
+
 		List<String> inclusions = new ArrayList<>();
 		List<String> exclusions = new ArrayList<>();
 

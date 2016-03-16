@@ -10,7 +10,12 @@ public interface NodeWalker<N extends Node<N>>
 {
 	N getRootNode();
 
-	default Optional<N> getNodeByCode(Optional<String> code)
+	default Optional<N> getNodeByCode(Optional<PreviousCodeMapping> code)
+	{
+		return code.map(c -> getNodesByCode().get(c.getPreviousCode()));
+	}
+	
+	default Optional<N> getNodeByCodeString(Optional<String> code)
 	{
 		return code.map(c -> getNodesByCode().get(c));
 	}

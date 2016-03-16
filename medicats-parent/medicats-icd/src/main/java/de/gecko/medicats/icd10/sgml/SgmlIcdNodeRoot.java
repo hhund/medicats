@@ -1,7 +1,6 @@
 package de.gecko.medicats.icd10.sgml;
 
-import java.util.Map;
-
+import de.gecko.medicats.PreviousCodeMappings;
 import de.gecko.medicats.icd10.IcdNodeFactory;
 import de.gecko.medicats.icd10.IcdNodeWalker;
 import de.gecko.medicats.icd10.IcdService;
@@ -10,19 +9,19 @@ public class SgmlIcdNodeRoot extends SgmlIcdNode
 {
 	private final String version;
 	private final int sortIndex;
-	private final Map<String, String> previousCodes;
+	private final PreviousCodeMappings mappings;
 	private final String previousVersion;
 
 	private IcdNodeWalker previousNodeWalker;
 	private boolean previouseCodeSupported = true;
 
-	public SgmlIcdNodeRoot(String version, int sortIndex, Map<String, String> previousCodes, String previousVersion)
+	public SgmlIcdNodeRoot(String version, int sortIndex, PreviousCodeMappings mappings, String previousVersion)
 	{
 		super(null, null, "ROOT", "ROOT", IcdNodeType.ROOT, IcdNodeUsage.UNDEFINED, null, null);
 
 		this.version = version;
 		this.sortIndex = sortIndex;
-		this.previousCodes = previousCodes;
+		this.mappings = mappings;
 		this.previousVersion = previousVersion;
 	}
 
@@ -33,9 +32,9 @@ public class SgmlIcdNodeRoot extends SgmlIcdNode
 	}
 
 	@Override
-	protected Map<String, String> getPreviousCodes()
+	protected PreviousCodeMappings getPreviousCodes()
 	{
-		return previousCodes;
+		return mappings;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.gecko.medicats.PreviousCodeMappings;
 import de.gecko.medicats.claml.ClaML;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.RubricKind;
@@ -16,7 +17,7 @@ public class ClaMLOpsNodeRoot extends ClaMLOpsNode
 {
 	private final ClaML claML;
 	private final String version;
-	private final Map<String, String> previousCodes;
+	private final PreviousCodeMappings mappings;
 	private final String previousVersion;
 
 	private Map<String, UsageKind> usageKinds;
@@ -25,13 +26,13 @@ public class ClaMLOpsNodeRoot extends ClaMLOpsNode
 	private OpsNodeWalker previousNodeWalker;
 	private boolean previouseCodeSupported = true;
 
-	ClaMLOpsNodeRoot(ClaML claML, String version, Map<String, String> previousCodes, String previousVersion)
+	ClaMLOpsNodeRoot(ClaML claML, String version, PreviousCodeMappings mappings, String previousVersion)
 	{
 		super(null, null, null, null);
 
 		this.claML = claML;
 		this.version = version;
-		this.previousCodes = previousCodes;
+		this.mappings = mappings;
 		this.previousVersion = previousVersion;
 	}
 
@@ -96,9 +97,9 @@ public class ClaMLOpsNodeRoot extends ClaMLOpsNode
 	}
 
 	@Override
-	protected Map<String, String> getPreviousCodes()
+	protected PreviousCodeMappings getPreviousCodes()
 	{
-		return previousCodes;
+		return mappings;
 	}
 
 	@Override

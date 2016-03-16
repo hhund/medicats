@@ -45,11 +45,23 @@ public class Ops2009NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	}
 
 	@Override
-	protected int getPreviousCodesCurrentColumn()
+	protected int getCurrentCodesColumn()
 	{
 		return 1;
 	}
 
+	@Override
+	protected int getCurrentCodesBackwardsCompatibleColumn()
+	{
+		return 5;
+	}
+	
+	@Override
+	protected int getPreviousCodesForwardsCompatibleColumn()
+	{
+		return 4;
+	}
+	
 	@Override
 	public OpsNodeWalker createNodeWalker()
 	{

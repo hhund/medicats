@@ -30,6 +30,7 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 	private static final String META_EXCLUDE_ON_PRECEDING_MODIFIER = "excludeOnPrecedingModifier";
 
 	private ClaML claML;
+	private ClaMLIcdNodeRoot root;
 
 	protected abstract String getXmlResourceFileName();
 
@@ -61,7 +62,7 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 
 	protected abstract Path getXmlResourcePath(FileSystem taxonomyZip);
 
-	protected ClaML getClaML()
+	protected synchronized ClaML getClaML()
 	{
 		if (claML == null)
 			claML = ClaMLReader.read(getXmlResource(), getClaMLDtd());
@@ -70,26 +71,31 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 	}
 
 	@Override
-	public ClaMLIcdNodeRoot getRootNode()
+	public synchronized ClaMLIcdNodeRoot getRootNode()
 	{
-		ClaML claML = getClaML();
-		ClaMLIcdNodeRoot root = new ClaMLIcdNodeRoot(claML, getVersion(), getSortIndex(), getPreviousCodes(),
-				getPreviousVersion());
+		if (root == null)
+		{
+			ClaML claML = getClaML();
+			ClaMLIcdNodeRoot root = new ClaMLIcdNodeRoot(claML, getVersion(), getSortIndex(), getPreviousCodes(),
+					getPreviousVersion());
 
-		Optional<ClaMLClassKind> chapterKind = claML.getClaMLClassKinds().getClaMLClassKinds().stream()
-				.filter(k -> "chapter".equals(k.getName())).findFirst();
+			Optional<ClaMLClassKind> chapterKind = claML.getClaMLClassKinds().getClaMLClassKinds().stream()
+					.filter(k -> "chapter".equals(k.getName())).findFirst();
 
-		List<ClaMLClass> chapters = claML.getClaMLClasses().stream().filter(c -> c.getKind().equals(chapterKind.get()))
-				.collect(Collectors.toList());
+			List<ClaMLClass> chapters = claML.getClaMLClasses().stream()
+					.filter(c -> c.getKind().equals(chapterKind.get())).collect(Collectors.toList());
 
-		Map<String, ClaMLClass> icdClassesByCode = claML.getClaMLClasses().parallelStream()
-				.collect(Collectors.toMap(c -> c.getCode(), Function.identity()));
+			Map<String, ClaMLClass> icdClassesByCode = claML.getClaMLClasses().parallelStream()
+					.collect(Collectors.toMap(c -> c.getCode(), Function.identity()));
 
-		Map<String, List<ModifierClass>> modifierClassesByModifier = claML.getModifierClasses().stream()
-				.collect(Collectors.groupingBy(c -> c.getModifier()));
+			Map<String, List<ModifierClass>> modifierClassesByModifier = claML.getModifierClasses().stream()
+					.collect(Collectors.groupingBy(c -> c.getModifier()));
 
-		for (ClaMLClass chapter : chapters)
-			createIcdNodes(root, chapter, icdClassesByCode, modifierClassesByModifier);
+			for (ClaMLClass chapter : chapters)
+				createIcdNodes(root, chapter, icdClassesByCode, modifierClassesByModifier);
+
+			this.root = root;
+		}
 
 		return root;
 	}

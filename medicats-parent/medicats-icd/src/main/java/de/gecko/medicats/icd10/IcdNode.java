@@ -11,6 +11,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.gecko.medicats.PreviousCodeMapping;
+import de.gecko.medicats.PreviousCodeMappings;
 import de.gecko.medicats.VersionedNode;
 
 public abstract class IcdNode implements VersionedNode<IcdNode>
@@ -158,7 +160,7 @@ public abstract class IcdNode implements VersionedNode<IcdNode>
 		return getParent().getSortIndex();
 	}
 
-	protected Map<String, String> getPreviousCodes()
+	protected PreviousCodeMappings getPreviousCodes()
 	{
 		return getParent().getPreviousCodes();
 	}
@@ -169,7 +171,7 @@ public abstract class IcdNode implements VersionedNode<IcdNode>
 		if (getPreviousNodeWalker() == null)
 			return Optional.empty();
 
-		Optional<IcdNode> previous = getPreviousNodeWalker().getNodeByCode(getPreviousCode());
+		Optional<IcdNode> previous = getPreviousNodeWalker().getNodeByCode(getPreviousMapping());
 
 		// if not found by previous code, try this code and check label
 		// unchanged
@@ -189,9 +191,23 @@ public abstract class IcdNode implements VersionedNode<IcdNode>
 	}
 
 	@Override
-	public Optional<String> getPreviousCode()
+	public Optional<PreviousCodeMapping> getPreviousMapping()
 	{
-		return Optional.ofNullable(getPreviousCodes().get(getCode()));
+		PreviousCodeMapping mapping = getPreviousCodes().get(getCode()).orElse(tryPreviousSameCode());
+
+		return Optional.ofNullable(mapping);
+	}
+
+	private PreviousCodeMapping tryPreviousSameCode()
+	{
+		if (getPreviousNodeWalker() == null)
+			return null;
+
+		IcdNode sameCodePrevious = getPreviousNodeWalker().getNodeByCode(getCode());
+		if (sameCodePrevious != null && sameCodePrevious.getLabel().equals(getLabel()))
+			return PreviousCodeMapping.unchanged(getCode());
+		else
+			return null;
 	}
 
 	public final Stream<IcdNode> getInclusions(Function<String, List<? extends IcdNode>> byCode)

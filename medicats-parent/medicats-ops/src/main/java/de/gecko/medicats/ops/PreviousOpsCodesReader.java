@@ -5,12 +5,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+
+import de.gecko.medicats.PreviousCodeMapping;
+import de.gecko.medicats.PreviousCodeMapping.Compatible;
+import de.gecko.medicats.PreviousCodeMappings;
 
 public final class PreviousOpsCodesReader
 {
@@ -18,19 +22,32 @@ public final class PreviousOpsCodesReader
 	{
 	}
 
-	public static Map<String, String> read(InputStream transitionFileStream, int previousColumn, int currentColumn)
+	public static PreviousCodeMappings read(InputStream transitionFileStream, int previousCodesColumn,
+			int currentCodesColumn, int previousCodesForwardsCompatibleColumn,
+			int currentCodesBackwardsCompatibleColumn)
 	{
-		Map<String, String> umsteiger = new HashMap<>();
+		List<PreviousCodeMapping> mappings = new ArrayList<>();
 
 		try (Reader reader = new InputStreamReader(transitionFileStream, StandardCharsets.UTF_8);
 				CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withDelimiter(';')))
 		{
 			for (final CSVRecord record : parser)
 			{
-				String previousCode = record.get(previousColumn);
-				String currentCode = record.get(currentColumn);
+				String previousCode = record.get(previousCodesColumn);
+				String currentCode = record.get(currentCodesColumn);
 
-				umsteiger.put(currentCode, previousCode.equals("None") ? null : previousCode);
+				Compatible previousCodeForwardsCompatible = previousCodesForwardsCompatibleColumn < 0
+						? Compatible.UNKNOWN
+						: ("A".equals(record.get(previousCodesForwardsCompatibleColumn)) ? Compatible.YES
+								: Compatible.NO);
+				Compatible currentCodeBackwardsCompatible = currentCodesBackwardsCompatibleColumn < 0
+						? Compatible.UNKNOWN
+						: ("A".equals(record.get(currentCodesBackwardsCompatibleColumn)) ? Compatible.YES
+								: Compatible.NO);
+
+				if (!previousCode.equals("None"))
+					mappings.add(new PreviousCodeMapping(previousCode, currentCode, previousCodeForwardsCompatible,
+							currentCodeBackwardsCompatible));
 			}
 		}
 		catch (IOException e)
@@ -38,6 +55,6 @@ public final class PreviousOpsCodesReader
 			throw new RuntimeException(e);
 		}
 
-		return umsteiger;
+		return new PreviousCodeMappings(mappings);
 	}
 }

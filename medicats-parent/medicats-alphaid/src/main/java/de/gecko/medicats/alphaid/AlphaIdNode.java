@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.gecko.medicats.PreviousCodeMapping;
 import de.gecko.medicats.VersionedNode;
 import de.gecko.medicats.icd10.IcdNode;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeUsage;
@@ -96,9 +97,9 @@ public class AlphaIdNode implements VersionedNode<AlphaIdNode>
 	}
 
 	@Override
-	public Optional<String> getPreviousCode()
+	public Optional<PreviousCodeMapping> getPreviousMapping()
 	{
-		return Optional.ofNullable(getAlphaId());
+		return Optional.of(PreviousCodeMapping.unchanged(getAlphaId()));
 	}
 
 	public boolean isValid()
@@ -132,7 +133,7 @@ public class AlphaIdNode implements VersionedNode<AlphaIdNode>
 		if (walker == null)
 			return Optional.empty();
 
-		return walker.getNodeByCode(getPreviousCode());
+		return walker.getNodeByCode(getPreviousMapping());
 	}
 
 	public IcdNode getPrimaryIcdNode()
