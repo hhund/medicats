@@ -1,4 +1,4 @@
-package de.gecko.medicats.ops.ver_2013;
+package de.gecko.medicats.ops.ver_2016;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
@@ -12,12 +12,12 @@ import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.claml.AbstractClaMLOpsNodeFactory;
 import de.gecko.medicats.ops.claml.ClaMLOpsNode;
 
-public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements OpsNodeFactory
+public class Ops2016NodeFactory extends AbstractClaMLOpsNodeFactory implements OpsNodeFactory
 {
-	private static final String XML_RESOURCE_FILENAME = "ops2013syst_claml_20121012.xml";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "ops2013syst_umsteiger_2012_2013_20121109.txt";
-	private static final String PREVIOUS_VERSION = "ops2012";
-	private static final String VERSION = "ops2013";
+	private static final String XML_RESOURCE_FILENAME = "ops2016syst_claml_20151016.xml";
+	private static final String UMSTEIGER_RESOURCE_FILENAME = "ops2016syst_umsteiger_2015_2016.txt";
+	private static final String PREVIOUS_VERSION = "ops2015";
+	private static final String VERSION = "ops2016";
 
 	@Override
 	protected String getXmlResourceFileName()
@@ -34,7 +34,7 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	@Override
 	public int getSortIndex()
 	{
-		return 2013;
+		return 2016;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	@Override
 	public OpsNodeWalker createNodeWalker()
 	{
-		return new Ops2013NodeWalker(getRootNode());
+		return new Ops2016NodeWalker(getRootNode());
 	}
 
 	@Override
@@ -78,25 +78,25 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	@Override
 	protected Path getTaxonomyZipFileName(Path basePath)
 	{
-		return basePath.resolve("p1sec2013.zip");
+		return basePath.resolve("p1sec2016.zip");
 	}
 
 	@Override
 	protected long getTaxonomyZipChecksum()
 	{
-		return 4093448168L;
+		return 3364848330L;
 	}
 
 	@Override
 	protected Path getTransitionZipFileName(Path basePath)
 	{
-		return basePath.resolve("p1sua2013.zip");
+		return basePath.resolve("p1sut2016.zip");
 	}
 
 	@Override
 	protected long getTransitionZipChecksum()
 	{
-		return 1652116193L;
+		return 1645503273L;
 	}
 
 	@Override
@@ -116,13 +116,13 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	{
 		return transitionZip.getPath("Klassifikationsdateien", getPreviousCodesFileName());
 	}
-
+	
 	@Override
 	protected int getPreviousCodesForwardsCompatibleColumn()
 	{
 		return 4;
 	}
-
+	
 	@Override
 	protected int getCurrentCodesBackwardsCompatibleColumn()
 	{

@@ -36,14 +36,14 @@ public final class PreviousOpsCodesReader
 				String previousCode = record.get(previousCodesColumn);
 				String currentCode = record.get(currentCodesColumn);
 
-				Compatible previousCodeForwardsCompatible = previousCodesForwardsCompatibleColumn < 0
-						? Compatible.UNKNOWN
-						: ("A".equals(record.get(previousCodesForwardsCompatibleColumn)) ? Compatible.YES
-								: Compatible.NO);
-				Compatible currentCodeBackwardsCompatible = currentCodesBackwardsCompatibleColumn < 0
-						? Compatible.UNKNOWN
-						: ("A".equals(record.get(currentCodesBackwardsCompatibleColumn)) ? Compatible.YES
-								: Compatible.NO);
+				Compatible previousCodeForwardsCompatible = previousCodesForwardsCompatibleColumn >= record.size()
+						|| previousCodesForwardsCompatibleColumn < 0 ? Compatible.UNKNOWN
+								: ("A".equals(record.get(previousCodesForwardsCompatibleColumn)) ? Compatible.YES
+										: Compatible.NO);
+				Compatible currentCodeBackwardsCompatible = currentCodesBackwardsCompatibleColumn >= record.size()
+						|| currentCodesBackwardsCompatibleColumn < 0 ? Compatible.UNKNOWN
+								: ("A".equals(record.get(currentCodesBackwardsCompatibleColumn)) ? Compatible.YES
+										: Compatible.NO);
 
 				if (!previousCode.equals("None"))
 					mappings.add(new PreviousCodeMapping(previousCode, currentCode, previousCodeForwardsCompatible,

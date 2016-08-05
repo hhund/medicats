@@ -116,4 +116,16 @@ public class Ops2015NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	{
 		return transitionZip.getPath("Klassifikationsdateien", getPreviousCodesFileName());
 	}
+
+	@Override
+	protected int getPreviousCodesForwardsCompatibleColumn()
+	{
+		return 4;
+	}
+
+	@Override
+	protected int getCurrentCodesBackwardsCompatibleColumn()
+	{
+		return 5;
+	}
 }
