@@ -73,8 +73,8 @@ public class Example
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2016/metadaten-ueberleitung/x1gut2016.zip
 
 ###### ICD 10 GM 2015
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2015/systematik/x1gec2015.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2015/metadaten-ueberleitung/x1gut2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2015/systematik/x1gec2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2015/metadaten-ueberleitung/x1gut2015.zip
 
 ###### ICD 10 GM 2014
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2014/systematik/x1gec2014-20131015.zip
@@ -135,8 +135,8 @@ public class Example
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2016/metadaten-ueberleitung/p1sut2016.zip
 
 ###### OPS 2015
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2015/systematik/p1sec2015.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2015/metadaten-ueberleitung/p1sut2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2015/systematik/p1sec2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2015/metadaten-ueberleitung/p1sut2015.zip
 
 ###### OPS 2014
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2014/systematik/p1sec2014-20131104.zip
@@ -197,7 +197,7 @@ public class Example
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2016/alphaid2016.zip
 
 ###### 2015
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2015/alphaid2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2015.zip
 
 ###### 2014
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2014.zip
