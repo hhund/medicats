@@ -6,13 +6,13 @@ Medical classification and terminology systems library for Java 1.8
 The following classification and terminologies are currently supported by medicats
 
 ##### ICD 10
-SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015
+SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015, GM 2016
 
 ##### OPS
-SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
+SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016
 
 ##### Alpha-ID
-2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
+2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016
 
 #### License
 
@@ -28,9 +28,9 @@ Checkout medicats-parent and run maven install using maven version >= 3 (https:/
 mvn install
 ```
 
-##### Runtime Dependencies
+##### Additional Test/Runtime Dependencies
 
-In order to use this library you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path". **Do not unpack or modify the downloaded zip-files.**
+In order to run tests during the build or use this library at runtime you need to download additional zip-files from http://www.dimdi.de and place them in a folder defined by the java system property "dimdi.files.path". **Do not unpack or modify the downloaded zip-files.**
 The default value for this property is "dimdi". The property can be changed via runtime flag or source code:
 
 ```
@@ -68,9 +68,13 @@ public class Example
 
 ##### ICD
 
+###### ICD 10 GM 2016
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2016/systematik/x1gec2016.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2016/metadaten-ueberleitung/x1gut2016.zip
+
 ###### ICD 10 GM 2015
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2015/systematik/x1gec2015.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2015/metadaten-ueberleitung/x1gut2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2015/systematik/x1gec2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2015/metadaten-ueberleitung/x1gut2015.zip
 
 ###### ICD 10 GM 2014
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2014/systematik/x1gec2014-20131015.zip
@@ -126,9 +130,13 @@ public class Example
 
 ##### OPS
 
+###### OPS 2016
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2016/systematik/p1sec2016.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2016/metadaten-ueberleitung/p1sut2016.zip
+
 ###### OPS 2015
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2015/systematik/p1sec2015.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2015/metadaten-ueberleitung/p1sut2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2015/systematik/p1sec2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2015/metadaten-ueberleitung/p1sut2015.zip
 
 ###### OPS 2014
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2014/systematik/p1sec2014-20131104.zip
@@ -185,8 +193,11 @@ public class Example
 
 ##### Alpha-ID
 
+###### 2016
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2016/alphaid2016.zip
+
 ###### 2015
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2015/alphaid2015.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2015.zip
 
 ###### 2014
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2014.zip
