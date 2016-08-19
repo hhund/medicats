@@ -11,11 +11,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.gecko.medicats.HasExclusions;
+import de.gecko.medicats.HasInclusions;
 import de.gecko.medicats.PreviousCodeMapping;
 import de.gecko.medicats.PreviousCodeMappings;
 import de.gecko.medicats.VersionedNode;
 
-public abstract class OpsNode implements VersionedNode<OpsNode>
+public abstract class OpsNode implements VersionedNode<OpsNode>, HasExclusions<OpsNode>, HasInclusions<OpsNode>
 {
 	public enum OpsNodeType
 	{
@@ -48,6 +50,7 @@ public abstract class OpsNode implements VersionedNode<OpsNode>
 			getParent().children.add(this);
 	}
 
+	@Override
 	public OpsNode getParent()
 	{
 		return parent;
@@ -143,6 +146,7 @@ public abstract class OpsNode implements VersionedNode<OpsNode>
 		return getParent().getVersion();
 	}
 
+	@Override
 	public String getPath()
 	{
 		return getParent().getPath() + "/" + getCode();
@@ -154,21 +158,25 @@ public abstract class OpsNode implements VersionedNode<OpsNode>
 		return getCode() + " " + getLabel();
 	}
 
+	@Override
 	public final Stream<OpsNode> getInclusions(Function<String, List<OpsNode>> byCode)
 	{
 		return getInclusionsImpl(byCode).filter(distinctByKey(OpsNode::getPath));
 	}
 
+	@Override
 	public final List<OpsNode> getInclusionsList(Function<String, List<OpsNode>> byCode)
 	{
 		return getInclusions(byCode).collect(Collectors.toList());
 	}
 
+	@Override
 	public final Stream<OpsNode> getExclusions(Function<String, List<OpsNode>> byCode)
 	{
 		return getExclusionsImpl(byCode).filter(distinctByKey(OpsNode::getPath));
 	}
 
+	@Override
 	public final List<OpsNode> getExclusionList(Function<String, List<OpsNode>> byCode)
 	{
 		return getExclusions(byCode).collect(Collectors.toList());

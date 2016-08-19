@@ -11,11 +11,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.gecko.medicats.HasExclusions;
+import de.gecko.medicats.HasInclusions;
 import de.gecko.medicats.PreviousCodeMapping;
 import de.gecko.medicats.PreviousCodeMappings;
 import de.gecko.medicats.VersionedNode;
 
-public abstract class IcdNode implements VersionedNode<IcdNode>
+public abstract class IcdNode implements VersionedNode<IcdNode>, HasExclusions<IcdNode>, HasInclusions<IcdNode>
 {
 	public enum IcdNodeType
 	{
@@ -94,6 +96,7 @@ public abstract class IcdNode implements VersionedNode<IcdNode>
 			getParent().children.add(this);
 	}
 
+	@Override
 	public IcdNode getParent()
 	{
 		return parent;
@@ -210,22 +213,26 @@ public abstract class IcdNode implements VersionedNode<IcdNode>
 			return null;
 	}
 
-	public final Stream<IcdNode> getInclusions(Function<String, List<? extends IcdNode>> byCode)
+	@Override
+	public final Stream<IcdNode> getInclusions(Function<String, List<IcdNode>> byCode)
 	{
 		return getInclusionsImpl(byCode).filter(distinctByKey(IcdNode::getPath));
 	}
 
-	public final List<IcdNode> getInclusionsList(Function<String, List<? extends IcdNode>> byCode)
+	@Override
+	public final List<IcdNode> getInclusionsList(Function<String, List<IcdNode>> byCode)
 	{
 		return getInclusions(byCode).collect(Collectors.toList());
 	}
 
-	public final Stream<IcdNode> getExclusions(Function<String, List<? extends IcdNode>> byCode)
+	@Override
+	public final Stream<IcdNode> getExclusions(Function<String, List<IcdNode>> byCode)
 	{
 		return getExclusionsImpl(byCode).filter(distinctByKey(IcdNode::getPath));
 	}
 
-	public final List<IcdNode> getExclusionList(Function<String, List<? extends IcdNode>> byCode)
+	@Override
+	public final List<IcdNode> getExclusionList(Function<String, List<IcdNode>> byCode)
 	{
 		return getExclusions(byCode).collect(Collectors.toList());
 	}
@@ -236,9 +243,9 @@ public abstract class IcdNode implements VersionedNode<IcdNode>
 		return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}
 
-	public abstract Stream<IcdNode> getInclusionsImpl(Function<String, List<? extends IcdNode>> byCode);
+	public abstract Stream<IcdNode> getInclusionsImpl(Function<String, List<IcdNode>> byCode);
 
-	public abstract Stream<IcdNode> getExclusionsImpl(Function<String, List<? extends IcdNode>> byCode);
+	public abstract Stream<IcdNode> getExclusionsImpl(Function<String, List<IcdNode>> byCode);
 
 	@Override
 	public String toString()
@@ -263,6 +270,7 @@ public abstract class IcdNode implements VersionedNode<IcdNode>
 			return new IcdNodeWrapper(toWrapp, usage);
 	}
 
+	@Override
 	public String getPath()
 	{
 		return getParent().getPath() + "/" + getCode();

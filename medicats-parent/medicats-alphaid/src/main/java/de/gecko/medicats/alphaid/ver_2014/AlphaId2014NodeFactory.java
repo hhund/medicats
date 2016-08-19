@@ -14,6 +14,18 @@ import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
 public class AlphaId2014NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
 	@Override
+	public String getName()
+	{
+		return "Alpha-ID 2014";
+	}
+	
+	@Override
+	public String getOid()
+	{
+		return "1.2.276.0.76.5.419";
+	}
+	
+	@Override
 	public String getVersion()
 	{
 		return "alphaid2014";

@@ -15,6 +15,18 @@ public class Ops2006NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	private static final String VERSION = "ops2006";
 
 	@Override
+	public String getName()
+	{
+		return "OPS 2006";
+	}
+
+	@Override
+	public String getOid()
+	{
+		return "1.2.276.0.76.5.310";
+	}
+
+	@Override
 	public String getVersion()
 	{
 		return VERSION;

@@ -49,13 +49,13 @@ public class IcdNodeWrapper extends IcdNode
 	}
 
 	@Override
-	public Stream<IcdNode> getInclusionsImpl(Function<String, List<? extends IcdNode>> byCode)
+	public Stream<IcdNode> getInclusionsImpl(Function<String, List<IcdNode>> byCode)
 	{
 		return getSourceNode().getInclusionsImpl(byCode);
 	}
 
 	@Override
-	public Stream<IcdNode> getExclusionsImpl(Function<String, List<? extends IcdNode>> byCode)
+	public Stream<IcdNode> getExclusionsImpl(Function<String, List<IcdNode>> byCode)
 	{
 		return getSourceNode().getExclusionsImpl(byCode);
 	}

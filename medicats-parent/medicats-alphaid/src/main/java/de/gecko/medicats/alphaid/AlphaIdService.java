@@ -4,7 +4,7 @@ import java.util.ServiceLoader;
 
 import de.gecko.medicats.CodeService;
 
-public class AlphaIdService extends CodeService<AlphaIdNodeFactory>
+public class AlphaIdService extends CodeService<AlphaIdNode, AlphaIdNodeWalker, AlphaIdNodeFactory>
 {
 	private static AlphaIdService service;
 

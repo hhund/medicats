@@ -27,8 +27,7 @@ final class ClaMLIcdNodeRoot extends ClaMLIcdNode
 	private IcdNodeWalker previousNodeWalker;
 	private boolean previouseCodeSupported = true;
 
-	ClaMLIcdNodeRoot(ClaML claML, String version, int sortIndex,PreviousCodeMappings mappings,
-			String previousVersion)
+	ClaMLIcdNodeRoot(ClaML claML, String version, int sortIndex, PreviousCodeMappings mappings, String previousVersion)
 	{
 		super(null, null, null, null);
 

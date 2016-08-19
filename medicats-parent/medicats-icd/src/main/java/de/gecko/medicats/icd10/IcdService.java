@@ -4,7 +4,7 @@ import java.util.ServiceLoader;
 
 import de.gecko.medicats.CodeService;
 
-public class IcdService extends CodeService<IcdNodeFactory>
+public class IcdService extends CodeService<IcdNode, IcdNodeWalker, IcdNodeFactory>
 {
 	private static IcdService service;
 

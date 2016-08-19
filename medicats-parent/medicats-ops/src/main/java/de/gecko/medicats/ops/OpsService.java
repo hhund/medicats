@@ -4,7 +4,7 @@ import java.util.ServiceLoader;
 
 import de.gecko.medicats.CodeService;
 
-public class OpsService extends CodeService<OpsNodeFactory>
+public class OpsService extends CodeService<OpsNode, OpsNodeWalker, OpsNodeFactory>
 {
 	private static OpsService service;
 

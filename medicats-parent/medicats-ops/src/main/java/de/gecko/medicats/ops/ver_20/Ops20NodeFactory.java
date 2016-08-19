@@ -14,6 +14,18 @@ public class Ops20NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsN
 	private static final String VERSION = "ops20";
 
 	@Override
+	public String getName()
+	{
+		return "OPS-301 Version 2.0";
+	}
+
+	@Override
+	public String getOid()
+	{
+		return "";
+	}
+
+	@Override
 	public String getVersion()
 	{
 		return VERSION;

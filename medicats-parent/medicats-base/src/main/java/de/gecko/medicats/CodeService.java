@@ -7,7 +7,7 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public abstract class CodeService<F extends VersionedNodeFactory<?, ?>>
+public abstract class CodeService<N extends VersionedNode<N>, W extends NodeWalker<N>, F extends VersionedNodeFactory<N, W>>
 {
 	private final ServiceLoader<F> loader;
 

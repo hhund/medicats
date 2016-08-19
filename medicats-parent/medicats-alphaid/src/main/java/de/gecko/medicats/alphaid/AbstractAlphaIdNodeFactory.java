@@ -113,9 +113,9 @@ public abstract class AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 	{
 		boolean valid = validFromString(r.get(0));
 		String alphaId = r.get(1);
-		String primaryIcdCode = nullIfEmpty(r.get(2));
-		String asterixIcdCode = nullIfEmpty(r.get(3));
-		String additionalIcdCode = nullIfEmpty(r.get(4));
+		String primaryIcdCode = removeSuffix(nullIfEmpty(r.get(2)));
+		String asterixIcdCode = removeSuffix(nullIfEmpty(r.get(3)));
+		String additionalIcdCode = removeSuffix(nullIfEmpty(r.get(4)));
 		String orphaId = r.get(5);
 		String label = r.get(6);
 
@@ -138,6 +138,17 @@ public abstract class AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 	protected String nullIfEmpty(String s)
 	{
 		return s == null || s.isEmpty() ? null : s;
+	}
+
+	protected String removeSuffix(String s)
+	{
+		if (s == null)
+			return null;
+
+		if (s.endsWith("!") || s.endsWith("+") || s.endsWith("*"))
+			return s.substring(0, s.length() - 1);
+
+		return s;
 	}
 
 	@Override

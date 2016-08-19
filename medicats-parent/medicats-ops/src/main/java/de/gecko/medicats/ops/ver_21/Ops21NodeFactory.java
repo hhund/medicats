@@ -15,6 +15,18 @@ public class Ops21NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsN
 	private static final String VERSION = "ops21";
 
 	@Override
+	public String getName()
+	{
+		return "OPS-301 Version 2.1";
+	}
+
+	@Override
+	public String getOid()
+	{
+		return "";
+	}
+
+	@Override
 	public String getVersion()
 	{
 		return VERSION;
@@ -49,13 +61,13 @@ public class Ops21NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsN
 	{
 		return 1;
 	}
-	
+
 	@Override
 	protected int getPreviousCodesForwardsCompatibleColumn()
 	{
 		return 2;
 	}
-	
+
 	@Override
 	protected int getCurrentCodesBackwardsCompatibleColumn()
 	{

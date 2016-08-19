@@ -15,6 +15,18 @@ public class Icd10GM2013NodeFactory extends AbstractClaMLIcdNodeFactory implemen
 	private static final String VERSION = "icd10gm2013";
 
 	@Override
+	public String getName()
+	{
+		return "ICD-10-GM 2013";
+	}
+
+	@Override
+	public String getOid()
+	{
+		return "1.2.276.0.76.5.413";
+	}
+
+	@Override
 	public String getPreviousVersion()
 	{
 		return PREVIOUS_VERSION;

@@ -20,6 +20,18 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	private static final String VERSION = "ops2013";
 
 	@Override
+	public String getName()
+	{
+		return "OPS 2013";
+	}
+	
+	@Override
+	public String getOid()
+	{
+		return "1.2.276.0.76.5.414";
+	}
+	
+	@Override
 	protected String getXmlResourceFileName()
 	{
 		return XML_RESOURCE_FILENAME;

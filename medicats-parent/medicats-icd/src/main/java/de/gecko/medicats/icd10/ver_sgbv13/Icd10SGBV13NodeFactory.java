@@ -20,6 +20,18 @@ public class Icd10SGBV13NodeFactory extends AbstractSgmlIcdNodeFactory implement
 	private static final String VERSION = "icd10sgbv13";
 
 	@Override
+	public String getName()
+	{
+		return "ICD-10 SGB V Version 1.3";
+	}
+
+	@Override
+	public String getOid()
+	{
+		return "";
+	}
+
+	@Override
 	public String getPreviousVersion()
 	{
 		return PREVIOUS_VERSION;

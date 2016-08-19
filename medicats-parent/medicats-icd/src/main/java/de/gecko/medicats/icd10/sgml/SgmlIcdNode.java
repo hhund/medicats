@@ -12,8 +12,8 @@ import de.gecko.medicats.icd10.IcdNode;
 
 public class SgmlIcdNode extends IcdNode
 {
-	public static SgmlIcdNode createNode(SgmlIcdNode parent, Element element, String label, String code, IcdNodeType nodeType,
-			IcdNodeUsage nodeUsage, List<String> inclusionCodes, List<String> exclusionCodes)
+	public static SgmlIcdNode createNode(SgmlIcdNode parent, Element element, String label, String code,
+			IcdNodeType nodeType, IcdNodeUsage nodeUsage, List<String> inclusionCodes, List<String> exclusionCodes)
 	{
 		SgmlIcdNode node = new SgmlIcdNode(Objects.requireNonNull(parent, "parent"),
 				Objects.requireNonNull(element, "element"), Objects.requireNonNull(label, "label"),
@@ -93,7 +93,7 @@ public class SgmlIcdNode extends IcdNode
 	}
 
 	@Override
-	public Stream<IcdNode> getInclusionsImpl(Function<String, List<? extends IcdNode>> byCode)
+	public Stream<IcdNode> getInclusionsImpl(Function<String, List<IcdNode>> byCode)
 	{
 		if (inclusionCodes == null || inclusionCodes.isEmpty())
 			return Stream.empty();
@@ -103,7 +103,7 @@ public class SgmlIcdNode extends IcdNode
 	}
 
 	@Override
-	public Stream<IcdNode> getExclusionsImpl(Function<String, List<? extends IcdNode>> byCode)
+	public Stream<IcdNode> getExclusionsImpl(Function<String, List<IcdNode>> byCode)
 	{
 		if (exclusionCodes == null || exclusionCodes.isEmpty())
 			return Stream.empty();

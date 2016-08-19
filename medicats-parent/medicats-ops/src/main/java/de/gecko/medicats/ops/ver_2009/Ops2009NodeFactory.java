@@ -15,6 +15,18 @@ public class Ops2009NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	private static final String VERSION = "ops2009";
 
 	@Override
+	public String getName()
+	{
+		return "OPS 2009";
+	}
+
+	@Override
+	public String getOid()
+	{
+		return "1.2.276.0.76.5.357";
+	}
+
+	@Override
 	public String getVersion()
 	{
 		return VERSION;
@@ -55,13 +67,13 @@ public class Ops2009NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	{
 		return 5;
 	}
-	
+
 	@Override
 	protected int getPreviousCodesForwardsCompatibleColumn()
 	{
 		return 4;
 	}
-	
+
 	@Override
 	public OpsNodeWalker createNodeWalker()
 	{

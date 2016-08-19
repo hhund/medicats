@@ -257,7 +257,7 @@ public class ClaMLIcdNode extends IcdNode
 		}).collect(Collectors.joining()).trim();
 	}
 
-	public String getExclusionsString(Function<String, List<? extends IcdNode>> byCode)
+	public String getExclusionsString(Function<String, List<IcdNode>> byCode)
 	{
 		return getExclusions(byCode).map(n -> n.getCode()).collect(Collectors.joining(", ", "[", "]"));
 	}
@@ -274,7 +274,7 @@ public class ClaMLIcdNode extends IcdNode
 	}
 
 	@Override
-	public Stream<IcdNode> getExclusionsImpl(Function<String, List<? extends IcdNode>> byCode)
+	public Stream<IcdNode> getExclusionsImpl(Function<String, List<IcdNode>> byCode)
 	{
 		if (isRoot())
 			return Stream.empty();
@@ -289,7 +289,7 @@ public class ClaMLIcdNode extends IcdNode
 		return nodes;
 	}
 
-	public String getInclusionsString(Function<String, List<? extends IcdNode>> byCode)
+	public String getInclusionsString(Function<String, List<IcdNode>> byCode)
 	{
 		return getInclusions(byCode).map(n -> n.getCode()).collect(Collectors.joining(", ", "[", "]"));
 	}
@@ -312,7 +312,7 @@ public class ClaMLIcdNode extends IcdNode
 	}
 
 	@Override
-	public Stream<IcdNode> getInclusionsImpl(Function<String, List<? extends IcdNode>> byCode)
+	public Stream<IcdNode> getInclusionsImpl(Function<String, List<IcdNode>> byCode)
 	{
 		if (isRoot())
 			return Stream.empty();
@@ -342,7 +342,7 @@ public class ClaMLIcdNode extends IcdNode
 				.flatMap(l -> l.getReferencesRecursive().stream()).collect(Collectors.toList());
 	}
 
-	private Stream<IcdNode> getPreferreds(Function<String, List<? extends IcdNode>> byCode)
+	private Stream<IcdNode> getPreferreds(Function<String, List<IcdNode>> byCode)
 	{
 		if (isRoot())
 			return Stream.empty();
