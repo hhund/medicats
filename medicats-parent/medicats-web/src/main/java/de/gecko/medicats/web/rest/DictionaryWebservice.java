@@ -25,12 +25,17 @@ public class DictionaryWebservice
 	public DictionaryWebservice(String baseUrl)
 	{
 		this.baseUrl = baseUrl;
-		dictionaries.add(new Dictionary(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH + "/alpha-id").build()),
+		dictionaries.add(new Dictionary(
+				Collections.singleton(
+						Link.fromUri(baseUrl + "/" + PATH + "/alpha-id").rel("resource").title("Alpha-ID").build()),
 				"Alpha-ID"));
 		dictionaries.add(new Dictionary(
-				Collections.singleton(Link.fromUri(baseUrl + "/" + PATH + "/icd-10-gm").build()), "ICD-10-GM"));
-		dictionaries
-				.add(new Dictionary(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH + "/ops").build()), "OPS"));
+				Collections.singleton(
+						Link.fromUri(baseUrl + "/" + PATH + "/icd-10-gm").rel("resource").title("ICD-10-GM").build()),
+				"ICD-10-GM"));
+		dictionaries.add(new Dictionary(
+				Collections.singleton(Link.fromUri(baseUrl + "/" + PATH + "/ops").rel("resource").title("OPS").build()),
+				"OPS"));
 	}
 
 	@GET
@@ -38,7 +43,8 @@ public class DictionaryWebservice
 	public Response getVocabularies()
 	{
 		return Response
-				.ok(new Dictionaries(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH).rel("self").build()), dictionaries))
+				.ok(new Dictionaries(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH).rel("self").build()),
+						dictionaries))
 				.build();
 	}
 }

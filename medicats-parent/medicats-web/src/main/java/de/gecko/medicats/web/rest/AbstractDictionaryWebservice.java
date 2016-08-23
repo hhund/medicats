@@ -98,11 +98,9 @@ public abstract class AbstractDictionaryWebservice<N extends de.gecko.medicats.V
 		F nodeFactory = factoriesByUrl.get(vocabularyRelease);
 
 		N root = nodeFactory.getRootNode();
-		int rootPathLength = root.getPath().length() + 1;
 		List<Link> childrenHrefs = root.children()
-				.map(n -> toLink("child", "dictionary", n.getCode(),
-						new String[] { baseUrl, vocabulary, vocabularyRelease,
-								n.getPath().substring(rootPathLength, n.getPath().length()) }))
+				.map(n -> Link.fromUri(baseUrl + "/" + vocabulary + "/" + vocabularyRelease + n.getUri()).rel("child")
+						.title(n.getCode()).type("dictionary").build())
 				.collect(Collectors.toList());
 
 		List<Link> links = new ArrayList<>();

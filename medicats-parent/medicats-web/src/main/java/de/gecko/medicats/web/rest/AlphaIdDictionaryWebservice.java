@@ -23,12 +23,14 @@ public class AlphaIdDictionaryWebservice
 {
 	public static final String PATH = DictionaryWebservice.PATH + "/alpha-id";
 
+	private final AlphaIdService service;
 	private final IcdService icdService;
 
 	public AlphaIdDictionaryWebservice(AlphaIdService service, IcdService icdService, String baseUrl)
 	{
-		super(service, baseUrl, "alpha-id");
+		super(service, baseUrl, PATH);
 
+		this.service = service;
 		this.icdService = icdService;
 	}
 
@@ -41,8 +43,8 @@ public class AlphaIdDictionaryWebservice
 			parentUri.add(p[i]);
 
 		Link self = toLink("self", "dictionary", vocabularyRelease, nodeFactory.getRootNode(), node);
-		Link alt = Link
-				.fromUri(baseUrl + "/" + OidDictionaryWebservice.PATH + "/" + nodeFactory.getOid() + "/" + node.getCode())
+		Link alt = Link.fromUri(
+				baseUrl + "/" + OidDictionaryWebservice.PATH + "/" + nodeFactory.getOid() + "/" + node.getCode())
 				.rel("alternate").title(node.getCode()).type("oid").build();
 		Link parent = toLink("parent", "dictionary", nodeFactory.getName(), parentUri.stream());
 
@@ -50,9 +52,23 @@ public class AlphaIdDictionaryWebservice
 		Link asterixIcdNode = toNodeLink("asterix-icd", "ditctionary", baseUrl, node.getAsterixIcdNode());
 		Link additionalIcdNode = toNodeLink("additional-icd", "dictionary", baseUrl, node.getAdditionalIcdNode());
 
+		Link previous = null;
+		if (node.getPrevious().isPresent())
+		{
+			AlphaIdNode previousNode = node.getPrevious().get();
+			AlphaIdNodeFactory previousNodeFactory = service.getNodeFactory(nodeFactory.getPreviousVersion());
+
+			if (previousNodeFactory != null)
+				previous = Link
+						.fromUri(baseUrl + "/" + vocabulary + "/" + previousNodeFactory.getSortIndex()
+								+ previousNode.getUri())
+						.rel("previous").title(previousNode.getCode()).type("dictionary").build();
+		}
+
 		List<Link> links = new ArrayList<>();
 		links.add(self);
 		links.add(alt);
+		links.add(previous);
 		links.add(primaryIcdNode);
 		links.add(asterixIcdNode);
 		links.add(additionalIcdNode);

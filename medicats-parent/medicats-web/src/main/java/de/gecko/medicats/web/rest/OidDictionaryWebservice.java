@@ -60,13 +60,18 @@ public class OidDictionaryWebservice
 	private final String baseUrl;
 	private final Map<String, VersionedNodeFactory<?, ?>> factories = new HashMap<>();
 
-	private IcdService icdService;
+	private final List<DictionaryRelease> dictionaries;
+	private final IcdService icdService;
+	private final OpsService opsService;
+	private final AlphaIdService alphaIdService;
 
 	public OidDictionaryWebservice(String baseUrl, IcdService icdService, OpsService opsService,
 			AlphaIdService alphaIdService)
 	{
 		this.baseUrl = baseUrl;
 		this.icdService = icdService;
+		this.opsService = opsService;
+		this.alphaIdService = alphaIdService;
 
 		icdService.getNodeFactories().stream().filter(f -> f.getOid() != null && !f.getOid().isEmpty())
 				.collect(Collectors.toMap(NodeFactory::getOid, Function.identity(), (a, b) -> a, () -> factories));
@@ -74,6 +79,14 @@ public class OidDictionaryWebservice
 				.collect(Collectors.toMap(NodeFactory::getOid, Function.identity(), (a, b) -> a, () -> factories));
 		alphaIdService.getNodeFactories().stream().filter(f -> f.getOid() != null && !f.getOid().isEmpty())
 				.collect(Collectors.toMap(NodeFactory::getOid, Function.identity(), (a, b) -> a, () -> factories));
+
+		dictionaries = factories.values().stream()
+				.sorted(Comparator.comparing(VersionedNodeFactory::getOid)).map(
+						f -> new DictionaryRelease(
+								Collections.singleton(Link.fromUri(baseUrl + "/" + PATH + "/" + f.getOid())
+										.rel("resource").title(f.getName()).type("oid").build()),
+								f.getName(), f.getOid()))
+				.collect(Collectors.toList());
 	}
 
 	@GET
@@ -81,13 +94,6 @@ public class OidDictionaryWebservice
 	public Response getAll()
 	{
 		logger.trace("GET '/" + PATH + "'");
-
-		List<DictionaryRelease> dictionaries = factories.values().stream()
-				.sorted(Comparator.comparing(VersionedNodeFactory::getOid))
-				.map(f -> new DictionaryRelease(
-						Collections.singleton(Link.fromUri(baseUrl + "/" + PATH + "/" + f.getOid()).build()),
-						f.getName(), f.getOid()))
-				.collect(Collectors.toList());
 
 		return Response.ok(
 				new DictionaryReleases(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH).build()), dictionaries))
@@ -170,6 +176,26 @@ public class OidDictionaryWebservice
 		Link alt = Link.fromUri(altPath + node.getUri()).rel("alternate").title(node.getCode()).type("dictionary")
 				.build();
 
+		Link previous = null;
+		if (node.getPrevious().isPresent())
+		{
+			Node<?> previousNode = node.getPrevious().get();
+			NodeFactory<?, ?> previousNodeFactory;
+
+			if (factory instanceof IcdNodeFactory)
+				previousNodeFactory = icdService.getNodeFactory(factory.getPreviousVersion());
+			else if (factory instanceof OpsNodeFactory)
+				previousNodeFactory = opsService.getNodeFactory(factory.getPreviousVersion());
+			else if (factory instanceof AlphaIdNodeFactory)
+				previousNodeFactory = alphaIdService.getNodeFactory(factory.getPreviousVersion());
+			else
+				throw new WebApplicationException(Status.NOT_FOUND);
+
+			if (previousNodeFactory != null)
+				previous = Link.fromUri(baseUrl + "/oid/" + previousNodeFactory.getOid() + "/" + previousNode.getCode())
+						.rel("previous").title(previousNode.getCode()).type("oid").build();
+		}
+
 		Link parent;
 		if (node.getParent() == null)
 			parent = null;
@@ -185,6 +211,7 @@ public class OidDictionaryWebservice
 		List<Link> links = new ArrayList<>();
 		links.add(self);
 		links.add(alt);
+		links.add(previous);
 
 		if (node instanceof IcdNode)
 		{

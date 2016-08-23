@@ -123,13 +123,16 @@ public class SearchWebservice
 
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response search(@QueryParam("label") String label)
+	public Response search(@QueryParam("q") String qParam)
 	{
+		if (qParam == null || qParam.isEmpty())
+			return Response.status(Status.BAD_REQUEST).build();
+
 		try
 		{
 			QueryParser parser = new QueryParser("label", analyzer);
 			parser.setAllowLeadingWildcard(true);
-			Query q = parser.parse(label);
+			Query q = parser.parse(qParam);
 
 			BooleanQuery bQ = new BooleanQuery.Builder().add(q, Occur.MUST).add(icdVersion, Occur.SHOULD)
 					.add(opsVersion, Occur.SHOULD).add(alphaIdVersion, Occur.SHOULD).build();
