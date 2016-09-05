@@ -64,6 +64,9 @@ public class Example
 }
 ```
 
+##### Medicats Webservice
+A current version of the medicats webservice (module medicats-web) can be accessed at: https://medicats.gecko.hs-heilbronn.de
+
 #### Download Links DIMDI
 
 ##### ICD
