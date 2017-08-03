@@ -17,6 +17,7 @@ import de.gecko.medicats.web.rest.OidDictionaryWebservice;
 import de.gecko.medicats.web.rest.DictionaryWebservice;
 import de.gecko.medicats.web.rest.OpsDictionaryWebservice;
 import de.gecko.medicats.web.rest.SearchWebservice;
+import de.gecko.medicats.web.rest.XsltTransformer;
 
 @Configuration
 public class WebserviceConfig
@@ -34,44 +35,50 @@ public class WebserviceConfig
 	private OpsService opsService;
 
 	@Bean
+	public XsltTransformer xsltTransformer()
+	{
+		return new XsltTransformer();
+	}
+
+	@Bean
 	public DictionaryWebservice dictionaryWebservice()
 	{
-		return new DictionaryWebservice(baseUrl);
+		return new DictionaryWebservice(baseUrl, xsltTransformer());
 	}
 
 	@Bean
 	public IcdDictionaryWebservice icdMedicatsWebservice()
 	{
-		return new IcdDictionaryWebservice(icdService, baseUrl);
+		return new IcdDictionaryWebservice(icdService, baseUrl, xsltTransformer());
 	}
 
 	@Bean
 	public OpsDictionaryWebservice opsMedicatsWebservice()
 	{
-		return new OpsDictionaryWebservice(opsService, baseUrl);
+		return new OpsDictionaryWebservice(opsService, baseUrl, xsltTransformer());
 	}
 
 	@Bean
 	public AlphaIdDictionaryWebservice alphaIdMedicatsWebservice()
 	{
-		return new AlphaIdDictionaryWebservice(alphaIdService, icdService, baseUrl);
+		return new AlphaIdDictionaryWebservice(alphaIdService, icdService, baseUrl, xsltTransformer());
 	}
 
 	@Bean
 	public OidDictionaryWebservice oidMedicatsWebservice()
 	{
-		return new OidDictionaryWebservice(baseUrl, icdService, opsService, alphaIdService);
+		return new OidDictionaryWebservice(baseUrl, icdService, opsService, alphaIdService, xsltTransformer());
 	}
 
 	@Bean
 	public SearchWebservice searchWebservice() throws IOException
 	{
-		return new SearchWebservice(baseUrl, icdService, opsService, alphaIdService);
+		return new SearchWebservice(baseUrl, icdService, opsService, alphaIdService, xsltTransformer());
 	}
 
 	@Bean
 	public MedicatsWebservice medicatsWebservice()
 	{
-		return new MedicatsWebservice(baseUrl);
+		return new MedicatsWebservice(baseUrl, xsltTransformer());
 	}
 }

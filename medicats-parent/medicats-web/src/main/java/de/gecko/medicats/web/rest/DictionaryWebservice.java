@@ -19,12 +19,15 @@ public class DictionaryWebservice
 {
 	public static final String PATH = "dictionary";
 
-	private final String baseUrl;
-	private final List<Dictionary> dictionaries = new ArrayList<>();
+	private final XsltTransformer transformer;
 
-	public DictionaryWebservice(String baseUrl)
+	private final Dictionaries indexDto;
+
+	public DictionaryWebservice(String baseUrl, XsltTransformer transformer)
 	{
-		this.baseUrl = baseUrl;
+		this.transformer = transformer;
+		List<Dictionary> dictionaries = new ArrayList<>();
+
 		dictionaries.add(new Dictionary(
 				Collections.singleton(
 						Link.fromUri(baseUrl + "/" + PATH + "/alpha-id").rel("resource").title("Alpha-ID").build()),
@@ -36,15 +39,22 @@ public class DictionaryWebservice
 		dictionaries.add(new Dictionary(
 				Collections.singleton(Link.fromUri(baseUrl + "/" + PATH + "/ops").rel("resource").title("OPS").build()),
 				"OPS"));
+
+		indexDto = new Dictionaries(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH).rel("self").build()),
+				dictionaries);
 	}
 
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getVocabularies()
 	{
-		return Response
-				.ok(new Dictionaries(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH).rel("self").build()),
-						dictionaries))
-				.build();
+		return Response.ok(indexDto).build();
+	}
+
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public Response getVocabulariesHtml()
+	{
+		return Response.ok(transformer.transform(indexDto, "Dictionaries.xslt")).build();
 	}
 }

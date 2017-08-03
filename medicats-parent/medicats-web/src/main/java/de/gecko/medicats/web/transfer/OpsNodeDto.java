@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "ops")
-@XmlType(propOrder = { "code", "label", "type", "links" })
+@XmlType(propOrder = { "oid", "dictionary", "code", "label", "type", "links" })
 public class OpsNodeDto extends NodeDto
 {
 	@XmlElement(name = "type")
@@ -25,9 +25,10 @@ public class OpsNodeDto extends NodeDto
 		type = null;
 	}
 
-	public OpsNodeDto(Collection<? extends Link> links, String code, String name, String type)
+	public OpsNodeDto(Collection<? extends Link> links, String oid, String dictionary, String code, String name,
+			String type)
 	{
-		super(links, code, name);
+		super(links, oid, dictionary, code, name);
 
 		this.type = type;
 	}

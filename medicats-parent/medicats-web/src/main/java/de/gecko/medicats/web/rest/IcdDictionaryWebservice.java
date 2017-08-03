@@ -25,9 +25,9 @@ public class IcdDictionaryWebservice
 
 	private final IcdService service;
 
-	public IcdDictionaryWebservice(IcdService service, String baseUrl)
+	public IcdDictionaryWebservice(IcdService service, String baseUrl, XsltTransformer transformer)
 	{
-		super(service, baseUrl, PATH);
+		super(service, baseUrl, PATH, transformer);
 
 		this.service = service;
 	}
@@ -43,9 +43,10 @@ public class IcdDictionaryWebservice
 		IcdNodeWalker walker = nodeFactory.createNodeWalker();
 
 		Link self = toLink("self", "dictionary", vocabularyRelease, nodeFactory.getRootNode(), node);
-		Link alt = IcdNodeType.CATEGORY.equals(node.getNodeType()) ? Link.fromUri(
-				baseUrl + "/" + OidDictionaryWebservice.PATH + "/" + nodeFactory.getOid() + "/" + node.getCode())
-				.rel("alternate").title(node.getCode()).type("oid").build() : null;
+		Link alt = IcdNodeType.CATEGORY.equals(node.getNodeType()) ? Link
+				.fromUri(baseUrl + "/" + OidDictionaryWebservice.PATH + "/" + nodeFactory.getOid() + "/"
+						+ node.getCode())
+				.rel("alternate").title(node.getCode() + " (" + node.getLabel() + ")").type("oid").build() : null;
 
 		List<Link> excludes = toLinks("excludes", "dictionary", vocabularyRelease, nodeFactory.getRootNode(),
 				node.getExclusions(walker::getNodesBySudoCode).sorted(Comparator.comparing(IcdNode::getPath)));
@@ -62,14 +63,15 @@ public class IcdDictionaryWebservice
 				previous = Link
 						.fromUri(baseUrl + "/" + vocabulary + "/" + previousNodeFactory.getSortIndex()
 								+ previousNode.getUri())
-						.rel("previous").title(previousNode.getCode()).type("dictionary").build();
+						.rel("previous").title(previousNode.getCode() + " (" + previousNode.getLabel() + ")")
+						.type("dictionary").build();
 		}
 
 		String parentTitle;
 		if (nodeFactory.getRootNode().equals(node.getParent()))
 			parentTitle = nodeFactory.getName();
 		else if (node.getParent() != null)
-			parentTitle = node.getParent().getCode();
+			parentTitle = node.getParent().getCode() + " (" + node.getParent().getLabel() + ")";
 		else
 			parentTitle = null;
 
@@ -84,7 +86,7 @@ public class IcdDictionaryWebservice
 		links.add(parent);
 		links.addAll(children);
 
-		return new IcdNodeDto(links, node.getCode(), node.getLabel(), StringConverter.toString(node.getNodeType()),
-				StringConverter.toString(node.getNodeUsage()));
+		return new IcdNodeDto(links, nodeFactory.getOid(), nodeFactory.getName(), node.getCode(), node.getLabel(),
+				StringConverter.toString(node.getNodeType()), StringConverter.toString(node.getNodeUsage()));
 	}
 }

@@ -61,17 +61,22 @@ public class OidDictionaryWebservice
 	private final Map<String, VersionedNodeFactory<?, ?>> factories = new HashMap<>();
 
 	private final List<DictionaryRelease> dictionaries;
+	private final DictionaryReleases indexDto;
+
 	private final IcdService icdService;
 	private final OpsService opsService;
 	private final AlphaIdService alphaIdService;
 
+	private final XsltTransformer transformer;
+
 	public OidDictionaryWebservice(String baseUrl, IcdService icdService, OpsService opsService,
-			AlphaIdService alphaIdService)
+			AlphaIdService alphaIdService, XsltTransformer transformer)
 	{
 		this.baseUrl = baseUrl;
 		this.icdService = icdService;
 		this.opsService = opsService;
 		this.alphaIdService = alphaIdService;
+		this.transformer = transformer;
 
 		icdService.getNodeFactories().stream().filter(f -> f.getOid() != null && !f.getOid().isEmpty())
 				.collect(Collectors.toMap(NodeFactory::getOid, Function.identity(), (a, b) -> a, () -> factories));
@@ -87,6 +92,9 @@ public class OidDictionaryWebservice
 										.rel("resource").title(f.getName()).type("oid").build()),
 								f.getName(), f.getOid()))
 				.collect(Collectors.toList());
+
+		indexDto = new DictionaryReleases(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH).build()),
+				dictionaries);
 	}
 
 	@GET
@@ -95,9 +103,16 @@ public class OidDictionaryWebservice
 	{
 		logger.trace("GET '/" + PATH + "'");
 
-		return Response.ok(
-				new DictionaryReleases(Collections.singleton(Link.fromUri(baseUrl + "/" + PATH).build()), dictionaries))
-				.build();
+		return Response.ok(indexDto).build();
+	}
+
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public Response getAllHtml()
+	{
+		logger.trace("GET '/" + PATH + "'");
+
+		return Response.ok(transformer.transform(indexDto, "DictionaryReleases.xslt")).build();
 	}
 
 	@GET
@@ -110,11 +125,33 @@ public class OidDictionaryWebservice
 		if (!factories.containsKey(oid))
 			return Response.status(Status.NOT_FOUND).build();
 
+		RootNodeDto dto = getMyOid(oid);
+
+		return Response.ok(dto).build();
+	}
+
+	@GET
+	@Path("{oid}")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getOidHtml(@PathParam("oid") String oid)
+	{
+		logger.trace("GET '/" + PATH + "/" + Objects.toString(oid) + "'");
+
+		if (!factories.containsKey(oid))
+			return Response.status(Status.NOT_FOUND).build();
+
+		RootNodeDto dto = getMyOid(oid);
+
+		return Response.ok(transformer.transform(dto, "RootNodeDto.xslt")).build();
+	}
+
+	private RootNodeDto getMyOid(String oid)
+	{
 		VersionedNodeFactory<?, ?> f = factories.get(oid);
 
 		List<Link> children = f.createNodeWalker().preOrderStream().filter(this::selectNode)
 				.map(n -> Link.fromUri(baseUrl + "/" + PATH + "/" + oid + "/" + n.getCode()).rel("child")
-						.title(n.getCode()).type("oid").build())
+						.title(n.getCode() + " (" + n.getLabel() + ")").type("oid").build())
 				.collect(Collectors.toList());
 
 		Link self = Link.fromUri(baseUrl + "/" + PATH + "/" + oid).rel("self").title(f.getName()).type("oid").build();
@@ -123,7 +160,8 @@ public class OidDictionaryWebservice
 		links.add(self);
 		links.addAll(children);
 
-		return Response.ok(new RootNodeDto(links, f.getName(), f.getOid())).build();
+		RootNodeDto dto = new RootNodeDto(links, f.getName(), f.getOid());
+		return dto;
 	}
 
 	private boolean selectNode(Object node)
@@ -155,13 +193,37 @@ public class OidDictionaryWebservice
 		if (node == null || !selectNode(node))
 			return Response.status(Status.NOT_FOUND).build();
 
-		return Response.ok(toDto(oid, factory, node)).build();
+		NodeDto dto = toDto(oid, factory, node);
+
+		return Response.ok(dto).build();
+	}
+
+	@GET
+	@Path("{oid}/{code}")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getOidHtml(@PathParam("oid") String oid, @PathParam("code") String code)
+	{
+		logger.trace("GET '/" + PATH + "/" + Objects.toString(oid) + "/" + Objects.toString(code) + "'");
+
+		if (!factories.containsKey(oid))
+			return Response.status(Status.NOT_FOUND).build();
+
+		VersionedNodeFactory<?, ?> factory = factories.get(oid);
+
+		VersionedNode<?> node = factory.createNodeWalker().getNodeByCode(code);
+
+		if (node == null || !selectNode(node))
+			return Response.status(Status.NOT_FOUND).build();
+
+		NodeDto dto = toDto(oid, factory, node);
+
+		return Response.ok(transformer.transform(dto, "NodeDto.xslt")).build();
 	}
 
 	private NodeDto toDto(String oid, VersionedNodeFactory<?, ?> factory, VersionedNode<?> node)
 	{
 		Link self = Link.fromUri(baseUrl + "/" + PATH + "/" + oid + "/" + node.getCode()).rel("self")
-				.title(node.getCode()).type("oid").build();
+				.title(node.getCode() + " (" + node.getLabel() + ")").type("oid").build();
 
 		String altPath;
 		if (factory instanceof IcdNodeFactory)
@@ -173,8 +235,8 @@ public class OidDictionaryWebservice
 		else
 			throw new WebApplicationException(Status.NOT_FOUND);
 
-		Link alt = Link.fromUri(altPath + node.getUri()).rel("alternate").title(node.getCode()).type("dictionary")
-				.build();
+		Link alt = Link.fromUri(altPath + node.getUri()).rel("alternate")
+				.title(node.getCode() + " (" + node.getLabel() + ")").type("dictionary").build();
 
 		Link previous = null;
 		if (node.getPrevious().isPresent())
@@ -191,9 +253,11 @@ public class OidDictionaryWebservice
 			else
 				throw new WebApplicationException(Status.NOT_FOUND);
 
-			if (previousNodeFactory != null)
+			if (previousNodeFactory != null && previousNodeFactory.getOid() != null
+					&& !previousNodeFactory.getOid().isEmpty())
 				previous = Link.fromUri(baseUrl + "/oid/" + previousNodeFactory.getOid() + "/" + previousNode.getCode())
-						.rel("previous").title(previousNode.getCode()).type("oid").build();
+						.rel("previous").title(previousNode.getCode() + " (" + previousNode.getLabel() + ")")
+						.type("oid").build();
 		}
 
 		Link parent;
@@ -203,8 +267,9 @@ public class OidDictionaryWebservice
 			parent = Link.fromUri(baseUrl + "/" + PATH + "/" + oid).rel("parent").title(factory.getName()).type("oid")
 					.build();
 		else if (!selectNode(node.getParent()))
-			parent = Link.fromUri(altPath + node.getParent().getUri()).rel("parent").title(node.getParent().getCode())
-					.type("dictionary").build();
+			parent = Link.fromUri(altPath + node.getParent().getUri()).rel("parent")
+					.title(node.getParent().getCode() + " (" + node.getParent().getLabel() + ")").type("dictionary")
+					.build();
 		else
 			parent = toHref("parent", oid, node.getParent());
 
@@ -228,7 +293,7 @@ public class OidDictionaryWebservice
 			links.add(parent);
 			links.addAll(children);
 
-			return new IcdNodeDto(links, node.getCode(), node.getLabel(),
+			return new IcdNodeDto(links, factory.getOid(), factory.getName(), node.getCode(), node.getLabel(),
 					StringConverter.toString(((IcdNode) node).getNodeType()),
 					StringConverter.toString(((IcdNode) node).getNodeUsage()));
 		}
@@ -247,7 +312,7 @@ public class OidDictionaryWebservice
 			links.add(parent);
 			links.addAll(children);
 
-			return new OpsNodeDto(links, node.getCode(), node.getLabel(),
+			return new OpsNodeDto(links, factory.getOid(), factory.getName(), node.getCode(), node.getLabel(),
 					StringConverter.toString(((OpsNode) node).getNodeType()));
 		}
 		else if (node instanceof AlphaIdNode)
@@ -273,7 +338,7 @@ public class OidDictionaryWebservice
 			links.add(parent);
 			links.addAll(children);
 
-			return new AlphaIdNodeDto(links, node.getCode(), node.getLabel());
+			return new AlphaIdNodeDto(links, factory.getOid(), factory.getName(), node.getCode(), node.getLabel());
 		}
 		else
 			return null;
@@ -290,7 +355,7 @@ public class OidDictionaryWebservice
 		if (node == null)
 			return null;
 
-		return Link.fromUri(baseUrl + "/" + PATH + "/" + oid + "/" + node.getCode()).rel(rel).title(node.getCode())
-				.type("oid").build();
+		return Link.fromUri(baseUrl + "/" + PATH + "/" + oid + "/" + node.getCode()).rel(rel)
+				.title(node.getCode() + " (" + node.getLabel() + ")").type("oid").build();
 	}
 }

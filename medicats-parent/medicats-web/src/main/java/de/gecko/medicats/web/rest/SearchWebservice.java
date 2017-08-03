@@ -71,52 +71,72 @@ public class SearchWebservice
 	private final IcdService icdService;
 	private final OpsService opsService;
 	private final AlphaIdService alphaIdService;
+	private final XsltTransformer transformer;
 
 	private final StandardAnalyzer analyzer;
 	private final IndexSearcher searcher;
 
-	private final Query icdVersion = new TermQuery(new Term("version", "icd10gm2016"));
-	private final Query opsVersion = new TermQuery(new Term("version", "ops2016"));
-	private final Query alphaIdVersion = new TermQuery(new Term("version", "alphaid2016"));
+	private final Query preferedIcdVersion;
+	private final Query preferedOpsVersion;
+	private final Query preferedAlphaIdVersion;
 
-	public SearchWebservice(String baseUrl, IcdService icdService, OpsService opsService, AlphaIdService alphaIdService)
-			throws IOException
+	public SearchWebservice(String baseUrl, IcdService icdService, OpsService opsService, AlphaIdService alphaIdService,
+			XsltTransformer transformer) throws IOException
 	{
 		this.baseUrl = baseUrl;
 		this.icdService = icdService;
 		this.opsService = opsService;
 		this.alphaIdService = alphaIdService;
+		this.transformer = transformer;
 
 		analyzer = new StandardAnalyzer();
 		Directory index = new RAMDirectory();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		IndexWriter writer = new IndexWriter(index, config);
 
-		logger.debug("adding icd entries to index ...");
+		logger.info("adding icd entries to search index ...");
 		icdService.getNodeFactories().stream().sorted(Comparator.comparing(IcdNodeFactory::getSortIndex)).forEach(f ->
 		{
-			logger.debug("... {}", f.getName());
+			logger.info("... {}", f.getName());
 			f.createNodeWalker().preOrderStream()
 					.forEach(createLableIndex("icd-10-gm", f.getOid(), f.getSortIndex(), writer));
 		});
-		logger.debug("adding ops entries to index ...");
+		logger.info("adding ops entries to search index ...");
 		opsService.getNodeFactories().stream().sorted(Comparator.comparing(OpsNodeFactory::getSortIndex)).forEach(f ->
 		{
-			logger.debug("... {}", f.getName());
+			logger.info("... {}", f.getName());
 			f.createNodeWalker().preOrderStream()
 					.forEach(createLableIndex("ops", f.getOid(), f.getSortIndex(), writer));
 		});
-		logger.debug("adding alpha-id entries to index ...");
+		logger.info("adding alpha-id entries to search index ...");
 		alphaIdService.getNodeFactories().stream().sorted(Comparator.comparing(AlphaIdNodeFactory::getSortIndex))
 				.forEach(f ->
 				{
-					logger.debug("... {}", f.getName());
+					logger.info("... {}", f.getName());
 					f.createNodeWalker().preOrderStream()
 							.forEach(createLableIndex("alpha-id", f.getOid(), f.getSortIndex(), writer));
 				});
 
 		writer.close();
-		logger.debug("index created");
+		logger.info("lucene search index created");
+
+		String preferredIcdVersionString = icdService.getNodeFactories().stream()
+				.sorted(Comparator.comparing(IcdNodeFactory::getSortIndex).reversed()).findFirst()
+				.map(IcdNodeFactory::getVersion).orElse("");
+		String preferredOpsVersionString = opsService.getNodeFactories().stream()
+				.sorted(Comparator.comparing(OpsNodeFactory::getSortIndex).reversed()).findFirst()
+				.map(OpsNodeFactory::getVersion).orElse("");
+		String preferredAlphaIdVersionString = alphaIdService.getNodeFactories().stream()
+				.sorted(Comparator.comparing(AlphaIdNodeFactory::getSortIndex).reversed()).findFirst()
+				.map(AlphaIdNodeFactory::getVersion).orElse("");
+
+		logger.info("Prefered ICD Version: {}", preferredIcdVersionString);
+		logger.info("Prefered OPS Version: {}", preferredOpsVersionString);
+		logger.info("Prefered AlphaId Version: {}", preferredAlphaIdVersionString);
+
+		preferedIcdVersion = new TermQuery(new Term("version", preferredIcdVersionString));
+		preferedOpsVersion = new TermQuery(new Term("version", preferredOpsVersionString));
+		preferedAlphaIdVersion = new TermQuery(new Term("version", preferredAlphaIdVersionString));
 
 		searcher = new IndexSearcher(DirectoryReader.open(index));
 	}
@@ -130,39 +150,9 @@ public class SearchWebservice
 
 		try
 		{
-			QueryParser parser = new QueryParser("label", analyzer);
-			parser.setAllowLeadingWildcard(true);
-			Query q = parser.parse(qParam);
+			SearchResultNodeListDto dto = searchImpl(qParam);
 
-			BooleanQuery bQ = new BooleanQuery.Builder().add(q, Occur.MUST).add(icdVersion, Occur.SHOULD)
-					.add(opsVersion, Occur.SHOULD).add(alphaIdVersion, Occur.SHOULD).build();
-
-			TopDocs docs = searcher.search(bQ, 100);
-			ScoreDoc[] hits = docs.scoreDocs;
-
-			List<SearchResultNodeDto> results = new ArrayList<>(hits.length);
-
-			logger.debug("Found " + docs.totalHits + (hits.length == 1 ? " hit" : " hits"));
-			for (int i = 0; i < hits.length; ++i)
-			{
-				int docId = hits[i].doc;
-				Document d = searcher.doc(docId);
-				String type = d.get("type");
-				String version = d.get("version");
-				String code = d.get("code");
-
-				if ("icd-10-gm".equals(type))
-					toIcdResult(version, code, results);
-				else if ("ops".equals(type))
-					toOpsResult(version, code, results);
-				else if ("alpha-id".equals(type))
-					toAlphaIdResult(version, code, results);
-			}
-
-			results = results.stream().filter(distinctByKey(r -> r.getOid() + r.getCode() + r.getLabel()))
-					.collect(Collectors.toList());
-
-			return Response.ok(new SearchResultNodeListDto(results)).build();
+			return Response.ok(dto).build();
 		}
 		catch (ParseException e)
 		{
@@ -172,6 +162,65 @@ public class SearchWebservice
 		{
 			throw new WebApplicationException();
 		}
+	}
+
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public Response searchHtml(@QueryParam("q") String qParam)
+	{
+		try
+		{
+			SearchResultNodeListDto dto = qParam == null || qParam.isEmpty()
+					? new SearchResultNodeListDto(Collections.emptyList()) : searchImpl(qParam);
+
+			return Response.ok(transformer.transform(dto, "SearchResultNodeListDto.xslt")).build();
+		}
+		catch (ParseException e)
+		{
+			throw new WebApplicationException(Status.BAD_REQUEST);
+		}
+		catch (IOException e)
+		{
+			throw new WebApplicationException();
+		}
+	}
+
+	private SearchResultNodeListDto searchImpl(String qParam) throws ParseException, IOException
+	{
+		QueryParser parser = new QueryParser("label", analyzer);
+		parser.setAllowLeadingWildcard(true);
+		Query q = parser.parse(qParam);
+
+		BooleanQuery bQ = new BooleanQuery.Builder().add(q, Occur.MUST).add(preferedIcdVersion, Occur.SHOULD)
+				.add(preferedOpsVersion, Occur.SHOULD).add(preferedAlphaIdVersion, Occur.SHOULD).build();
+
+		TopDocs docs = searcher.search(bQ, 100);
+		ScoreDoc[] hits = docs.scoreDocs;
+
+		List<SearchResultNodeDto> results = new ArrayList<>(hits.length);
+
+		logger.debug("Found " + docs.totalHits + (hits.length == 1 ? " hit" : " hits"));
+		for (int i = 0; i < hits.length; ++i)
+		{
+			int docId = hits[i].doc;
+			Document d = searcher.doc(docId);
+			String type = d.get("type");
+			String version = d.get("version");
+			String code = d.get("code");
+
+			if ("icd-10-gm".equals(type))
+				toIcdResult(version, code, results);
+			else if ("ops".equals(type))
+				toOpsResult(version, code, results);
+			else if ("alpha-id".equals(type))
+				toAlphaIdResult(version, code, results);
+		}
+
+		results = results.stream().filter(distinctByKey(r -> r.getOid() + r.getCode() + r.getLabel()))
+				.collect(Collectors.toList());
+
+		SearchResultNodeListDto dto = new SearchResultNodeListDto(results);
+		return dto;
 	}
 
 	public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor)
@@ -237,9 +286,10 @@ public class SearchWebservice
 			return;
 		}
 
-		Link l = Link.fromUri(
-				baseUrl + "/" + AlphaIdDictionaryWebservice.PATH + "/" + String.valueOf(f.getSortIndex()) + n.getUri())
-				.rel("via").type("dictionary").title(n.getCode()).build();
+		Link l = Link
+				.fromUri(baseUrl + "/" + AlphaIdDictionaryWebservice.PATH + "/" + String.valueOf(f.getSortIndex())
+						+ n.getUri())
+				.rel("via").type("dictionary").title(n.getCode() + " (" + n.getLabel() + ")").build();
 		SearchResultNodeDto r = new SearchResultNodeDto(Collections.singleton(l), f.getOid(), f.getName(),
 				String.valueOf(f.getSortIndex()), n.getLabel(), n.getCode());
 

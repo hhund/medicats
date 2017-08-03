@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "icd")
-@XmlType(propOrder = { "code", "label", "type", "usage", "links" })
+@XmlType(propOrder = { "oid", "dictionary", "code", "label", "type", "usage", "links" })
 public class IcdNodeDto extends NodeDto
 {
 	@XmlElement(name = "type")
@@ -29,9 +29,10 @@ public class IcdNodeDto extends NodeDto
 		usage = null;
 	}
 
-	public IcdNodeDto(Collection<? extends Link> links, String code, String name, String type, String usage)
+	public IcdNodeDto(Collection<? extends Link> links, String oid, String dictionary, String code, String name,
+			String type, String usage)
 	{
-		super(links, code, name);
+		super(links, oid, dictionary, code, name);
 
 		this.type = type;
 		this.usage = usage;
