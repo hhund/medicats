@@ -79,7 +79,8 @@ public class IcdDictionaryWebservice
 
 		List<Link> links = new ArrayList<>();
 		links.add(self);
-		links.add(alt);
+		if (nodeFactory.getOid() != null && !nodeFactory.getOid().isEmpty())
+			links.add(alt);
 		links.add(previous);
 		links.addAll(excludes);
 		links.addAll(includes);

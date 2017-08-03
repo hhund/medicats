@@ -73,7 +73,8 @@ public class AlphaIdDictionaryWebservice
 
 		List<Link> links = new ArrayList<>();
 		links.add(self);
-		links.add(alt);
+		if (nodeFactory.getOid() != null && !nodeFactory.getOid().isEmpty())
+			links.add(alt);
 		links.add(previous);
 		links.add(primaryIcdNode);
 		links.add(asterixIcdNode);
