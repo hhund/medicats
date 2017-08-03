@@ -22,7 +22,7 @@ public class MedicatsWebservice
 
 	private final XsltTransformer transformer;
 
-	public MedicatsWebservice(String baseUrl, XsltTransformer transformer)
+	public MedicatsWebservice(String baseUrl, String imprintUrl, XsltTransformer transformer)
 	{
 		links.add(Link.fromUri(baseUrl + "/" + OidDictionaryWebservice.PATH).rel("resource").type("oid")
 				.title("Dictionaries by OID").build());
@@ -30,6 +30,8 @@ public class MedicatsWebservice
 				.title("Dictionaries by Name").build());
 		links.add(Link.fromUri(baseUrl + "/" + SearchWebservice.PATH + "?q=").rel("resource")
 				.title("Search dictionary entries by full text query").build());
+		if (imprintUrl != null && !imprintUrl.isEmpty())
+			links.add(Link.fromUri(imprintUrl).rel("resource").title("Imprint / Impressum").build());
 
 		indexDto = new MedicatsDto(
 				"Source for ICD-10-GM, OPS and Alpha-ID catalogs: Deutschen Instituts für Medizinische Dokumentation und Information (DIMDI) http://www.dimdi.de.",

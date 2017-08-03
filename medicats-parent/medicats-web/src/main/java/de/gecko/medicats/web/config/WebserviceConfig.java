@@ -11,10 +11,10 @@ import de.gecko.medicats.alphaid.AlphaIdService;
 import de.gecko.medicats.icd10.IcdService;
 import de.gecko.medicats.ops.OpsService;
 import de.gecko.medicats.web.rest.AlphaIdDictionaryWebservice;
+import de.gecko.medicats.web.rest.DictionaryWebservice;
 import de.gecko.medicats.web.rest.IcdDictionaryWebservice;
 import de.gecko.medicats.web.rest.MedicatsWebservice;
 import de.gecko.medicats.web.rest.OidDictionaryWebservice;
-import de.gecko.medicats.web.rest.DictionaryWebservice;
 import de.gecko.medicats.web.rest.OpsDictionaryWebservice;
 import de.gecko.medicats.web.rest.SearchWebservice;
 import de.gecko.medicats.web.rest.XsltTransformer;
@@ -24,6 +24,9 @@ public class WebserviceConfig
 {
 	@Value("${de.gecko.medicats.baseUrl}")
 	private String baseUrl;
+
+	@Value("${de.gecko.medicats.imprintUrl:#{null}}")
+	private String imprintUrl;
 
 	@Autowired
 	private AlphaIdService alphaIdService;
@@ -79,6 +82,6 @@ public class WebserviceConfig
 	@Bean
 	public MedicatsWebservice medicatsWebservice()
 	{
-		return new MedicatsWebservice(baseUrl, xsltTransformer());
+		return new MedicatsWebservice(baseUrl, imprintUrl, xsltTransformer());
 	}
 }
