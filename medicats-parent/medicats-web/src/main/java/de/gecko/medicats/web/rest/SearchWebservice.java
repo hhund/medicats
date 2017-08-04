@@ -32,8 +32,8 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -187,11 +187,11 @@ public class SearchWebservice
 
 	private SearchResultNodeListDto searchImpl(String qParam) throws ParseException, IOException
 	{
-		QueryParser parser = new QueryParser("label", analyzer);
-		parser.setAllowLeadingWildcard(true);
-		Query q = parser.parse(qParam);
+		MultiFieldQueryParser mfieldParser = new MultiFieldQueryParser(new String[] { "label", "code" }, analyzer);
+		mfieldParser.setAllowLeadingWildcard(true);
+		Query query = mfieldParser.parse(qParam);
 
-		BooleanQuery bQ = new BooleanQuery.Builder().add(q, Occur.MUST).add(preferedIcdVersion, Occur.SHOULD)
+		BooleanQuery bQ = new BooleanQuery.Builder().add(query, Occur.MUST).add(preferedIcdVersion, Occur.SHOULD)
 				.add(preferedOpsVersion, Occur.SHOULD).add(preferedAlphaIdVersion, Occur.SHOULD).build();
 
 		TopDocs docs = searcher.search(bQ, 100);
@@ -311,8 +311,9 @@ public class SearchWebservice
 			Document d = new Document();
 			d.add(new StringField("type", type, Field.Store.YES));
 			d.add(new StringField("version", n.getVersion(), Field.Store.YES));
-			d.add(new StringField("code", n.getCode(), Field.Store.YES));
+			d.add(new TextField("code", n.getCode(), Field.Store.YES));
 			d.add(new TextField("label", n.getLabel(), Field.Store.NO));
+
 			try
 			{
 				writer.addDocument(d);
