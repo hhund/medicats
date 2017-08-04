@@ -76,8 +76,8 @@ A current version of the medicats webservice (module medicats-web) can be access
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2017/metadaten-ueberleitung/x1gut2017.zip
 
 ###### ICD 10 GM 2016
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2016/systematik/x1gec2016.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2016/metadaten-ueberleitung/x1gut2016.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2016/systematik/x1gec2016.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2016/metadaten-ueberleitung/x1gut2016.zip
 
 ###### ICD 10 GM 2015
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2015/systematik/x1gec2015.zip
@@ -142,8 +142,8 @@ A current version of the medicats webservice (module medicats-web) can be access
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2017/metadaten-ueberleitung/p1sut2017.zip
 
 ###### OPS 2016
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2016/systematik/p1sec2016.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2016/metadaten-ueberleitung/p1sut2016.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2016/systematik/p1sec2016.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2016/metadaten-ueberleitung/p1sut2016.zip
 
 ###### OPS 2015
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2015/systematik/p1sec2015.zip
@@ -208,7 +208,7 @@ A current version of the medicats webservice (module medicats-web) can be access
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2017/alphaid2017.zip
 
 ###### 2016
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2016/alphaid2016.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2016.zip
 
 ###### 2015
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2015.zip
