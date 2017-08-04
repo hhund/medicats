@@ -1,5 +1,7 @@
 package de.gecko.medicats.alphaid.ver_2017;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 
@@ -13,13 +15,13 @@ public class AlphaId2017NodeFactory extends AbstractAlphaIdNodeFactory implement
 	{
 		return "Alpha-ID 2017";
 	}
-	
+
 	@Override
 	public String getOid()
 	{
 		return "1.2.276.0.76.5.465";
 	}
-	
+
 	@Override
 	public String getVersion()
 	{
@@ -66,5 +68,11 @@ public class AlphaId2017NodeFactory extends AbstractAlphaIdNodeFactory implement
 	protected Path getDataFileResourcePath(FileSystem taxonomyZip)
 	{
 		return taxonomyZip.getPath(getDataFileName());
+	}
+
+	@Override
+	protected Charset getDataFileEncoding()
+	{
+		return StandardCharsets.UTF_8;
 	}
 }
