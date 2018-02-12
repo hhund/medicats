@@ -108,16 +108,25 @@ public class AlphaIdNode implements VersionedNode<AlphaIdNode>
 		return valid;
 	}
 
+	/**
+	 * @return might be <code>null</code>
+	 */
 	public String getPrimaryIcdCode()
 	{
 		return primaryIcdCode;
 	}
 
+	/**
+	 * @return might be <code>null</code>
+	 */
 	public String getAsterixIcdCode()
 	{
 		return asterixIcdCode;
 	}
 
+	/**
+	 * @return might be <code>null</code>
+	 */
 	public String getAdditionalIcdCode()
 	{
 		return additionalIcdCode;
@@ -137,32 +146,32 @@ public class AlphaIdNode implements VersionedNode<AlphaIdNode>
 		return walker.getNodeByCode(getPreviousMapping());
 	}
 
-	public IcdNode getPrimaryIcdNode()
+	public Optional<IcdNode> getPrimaryIcdNode()
 	{
 		return getIcdNode(getPrimaryIcdCode());
 	}
 
-	public IcdNode getAsterixIcdNode()
+	public Optional<IcdNode> getAsterixIcdNode()
 	{
 		return getIcdNode(getAsterixIcdCode());
 	}
 
-	public IcdNode getAdditionalIcdNode()
+	public Optional<IcdNode> getAdditionalIcdNode()
 	{
 		return getIcdNode(getAdditionalIcdCode());
 	}
 
-	private IcdNode getIcdNode(String code)
+	private Optional<IcdNode> getIcdNode(String code)
 	{
 		if (code == null)
-			return null;
+			return Optional.empty();
 
 		IcdNodeWalker walker = getIcdNodeWalker();
 
 		if (walker == null)
-			return null;
+			return Optional.empty();
 
-		return wrappIfUsageDifferent(walker.getNodeByCode(removeUsage(code)), fromCode(code));
+		return Optional.ofNullable(wrappIfUsageDifferent(walker.getNodeByCode(removeUsage(code)), fromCode(code)));
 	}
 
 	private String removeUsage(String code)
@@ -225,7 +234,8 @@ public class AlphaIdNode implements VersionedNode<AlphaIdNode>
 	@Override
 	public String toString()
 	{
-		List<IcdNode> icdNodes = Arrays.asList(getPrimaryIcdNode(), getAsterixIcdNode(), getAdditionalIcdNode());
+		List<IcdNode> icdNodes = Arrays.asList(getPrimaryIcdNode().orElse(null), getAsterixIcdNode().orElse(null),
+				getAdditionalIcdNode().orElse(null));
 
 		String icdNodesString = icdNodes.stream().filter(n -> n != null).map(IcdNode::toString)
 				.collect(Collectors.joining(", "));

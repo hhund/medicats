@@ -8,5 +8,5 @@ public interface HasInclusions<N extends Node<N>>
 {
 	Stream<N> getInclusions(Function<String, List<N>> byCode);
 
-	List<N> getInclusionsList(Function<String, List<N>> byCode);
+	List<N> getInclusionList(Function<String, List<N>> byCode);
 }

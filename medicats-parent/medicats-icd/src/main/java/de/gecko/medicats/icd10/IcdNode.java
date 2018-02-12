@@ -220,7 +220,7 @@ public abstract class IcdNode implements VersionedNode<IcdNode>, HasExclusions<I
 	}
 
 	@Override
-	public final List<IcdNode> getInclusionsList(Function<String, List<IcdNode>> byCode)
+	public final List<IcdNode> getInclusionList(Function<String, List<IcdNode>> byCode)
 	{
 		return getInclusions(byCode).collect(Collectors.toList());
 	}

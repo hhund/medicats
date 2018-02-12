@@ -103,7 +103,7 @@ public abstract class AbstractOpsNodeWalker implements OpsNodeWalker
 			out.println(identention + n.toString());
 
 			List<OpsNode> exclusionsList = n.getExclusionList(this::getNodesBySudoCode);
-			List<OpsNode> inclusionsList = n.getInclusionsList(this::getNodesBySudoCode);
+			List<OpsNode> inclusionsList = n.getInclusionList(this::getNodesBySudoCode);
 
 			if (!exclusionsList.isEmpty())
 				out.println(identention + " -" + exclusionsList);

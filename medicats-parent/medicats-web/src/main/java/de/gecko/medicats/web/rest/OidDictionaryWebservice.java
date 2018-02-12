@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -285,7 +286,7 @@ public class OidDictionaryWebservice
 			List<Link> excludes = toLinksFlatNodes("excludes", oid,
 					((IcdNode) node).getExclusionList(walker::getNodesBySudoCode));
 			List<Link> includes = toLinksFlatNodes("includes", oid,
-					((IcdNode) node).getInclusionsList(walker::getNodesBySudoCode));
+					((IcdNode) node).getInclusionList(walker::getNodesBySudoCode));
 			List<Link> children = toLinksFlatNodes("child", oid, ((IcdNode) node).getChildren());
 
 			links.addAll(excludes);
@@ -304,7 +305,7 @@ public class OidDictionaryWebservice
 			List<Link> excludes = toLinksFlatNodes("excludes", oid,
 					((OpsNode) node).getExclusionList(walker::getNodesBySudoCode));
 			List<Link> includes = toLinksFlatNodes("includes", oid,
-					((OpsNode) node).getInclusionsList(walker::getNodesBySudoCode));
+					((OpsNode) node).getInclusionList(walker::getNodesBySudoCode));
 			List<Link> children = toLinksFlatNodes("child", oid, ((OpsNode) node).getChildren());
 
 			links.addAll(excludes);
@@ -317,24 +318,18 @@ public class OidDictionaryWebservice
 		}
 		else if (node instanceof AlphaIdNode)
 		{
-			IcdNode primaryIcdNode = ((AlphaIdNode) node).getPrimaryIcdNode();
-			Link primaryIcd = primaryIcdNode == null ? null
-					: toHref("primary-icd", icdService.getNodeFactory(primaryIcdNode.getVersion()).getOid(),
-							primaryIcdNode);
-			IcdNode asterixIcdNode = ((AlphaIdNode) node).getAsterixIcdNode();
-			Link asterixIcd = asterixIcdNode == null ? null
-					: toHref("asterix-icd", icdService.getNodeFactory(asterixIcdNode.getVersion()).getOid(),
-							asterixIcdNode);
-			IcdNode additionalIcdNode = ((AlphaIdNode) node).getAdditionalIcdNode();
-			Link additionalIcd = additionalIcdNode == null ? null
-					: toHref("additional-icd", icdService.getNodeFactory(additionalIcdNode.getVersion()).getOid(),
-							additionalIcdNode);
+			Optional<Link> primaryIcdNode = ((AlphaIdNode) node).getPrimaryIcdNode()
+					.map(n -> toHref("primary-icd", icdService.getNodeFactory(n.getVersion()).getOid(), n));
+			Optional<Link> asterixIcdNode = ((AlphaIdNode) node).getAsterixIcdNode()
+					.map(n -> toHref("asterix-icd", icdService.getNodeFactory(n.getVersion()).getOid(), n));
+			Optional<Link> additionalIcdNode = ((AlphaIdNode) node).getAdditionalIcdNode()
+					.map(n -> toHref("additional-icd", icdService.getNodeFactory(n.getVersion()).getOid(), n));
 
 			List<Link> children = toLinksFlatNodes("child", oid, ((AlphaIdNode) node).getChildren());
 
-			links.add(primaryIcd);
-			links.add(asterixIcd);
-			links.add(additionalIcd);
+			primaryIcdNode.ifPresent(links::add);
+			asterixIcdNode.ifPresent(links::add);
+			additionalIcdNode.ifPresent(links::add);
 			links.add(parent);
 			links.addAll(children);
 

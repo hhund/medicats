@@ -253,7 +253,7 @@ public abstract class AbstractIcdNodeWalker implements IcdNodeWalker
 			out.println(identention + n.toString());
 
 			List<IcdNode> exclusionsList = n.getExclusionList(this::getNodesBySudoCode);
-			List<IcdNode> inclusionsList = n.getInclusionsList(this::getNodesBySudoCode);
+			List<IcdNode> inclusionsList = n.getInclusionList(this::getNodesBySudoCode);
 
 			if (!exclusionsList.isEmpty())
 				out.println(identention + " -" + exclusionsList);

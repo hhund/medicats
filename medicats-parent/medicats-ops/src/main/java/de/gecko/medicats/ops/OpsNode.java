@@ -165,7 +165,7 @@ public abstract class OpsNode implements VersionedNode<OpsNode>, HasExclusions<O
 	}
 
 	@Override
-	public final List<OpsNode> getInclusionsList(Function<String, List<OpsNode>> byCode)
+	public final List<OpsNode> getInclusionList(Function<String, List<OpsNode>> byCode)
 	{
 		return getInclusions(byCode).collect(Collectors.toList());
 	}

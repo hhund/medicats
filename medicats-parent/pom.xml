@@ -27,10 +27,13 @@
 		<module>medicats-ops</module>
 		<module>medicats-alphaid</module>
 		<module>medicats-web</module>
+		<module>medicats-fhir</module>
 	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<spring.version>4.2.1.RELEASE</spring.version>
 	</properties>
 
 	<dependencyManagement>
@@ -64,6 +67,11 @@
 			<dependency>
 				<groupId>de.gecko.medicats</groupId>
 				<artifactId>medicats-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.gecko.medicats</groupId>
+				<artifactId>medicats-fhir</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

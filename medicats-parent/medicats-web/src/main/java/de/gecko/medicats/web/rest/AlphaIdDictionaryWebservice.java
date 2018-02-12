@@ -3,6 +3,7 @@ package de.gecko.medicats.web.rest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Link;
@@ -50,12 +51,12 @@ public class AlphaIdDictionaryWebservice
 				.rel("alternate").title(node.getCode() + " (" + node.getLabel() + ")").type("oid").build();
 		Link parent = toLink("parent", "dictionary", nodeFactory.getName(), parentUri.stream());
 
-		Link primaryIcdNode = toNodeLink("primary-icd", "dictionary", baseUrl + "/" + DictionaryWebservice.PATH,
-				node.getPrimaryIcdNode());
-		Link asterixIcdNode = toNodeLink("asterix-icd", "dictionary", baseUrl + "/" + DictionaryWebservice.PATH,
-				node.getAsterixIcdNode());
-		Link additionalIcdNode = toNodeLink("additional-icd", "dictionary", baseUrl + "/" + DictionaryWebservice.PATH,
-				node.getAdditionalIcdNode());
+		Optional<Link> primaryIcdNode = toNodeLink("primary-icd", "dictionary",
+				baseUrl + "/" + DictionaryWebservice.PATH, node.getPrimaryIcdNode());
+		Optional<Link> asterixIcdNode = toNodeLink("asterix-icd", "dictionary",
+				baseUrl + "/" + DictionaryWebservice.PATH, node.getAsterixIcdNode());
+		Optional<Link> additionalIcdNode = toNodeLink("additional-icd", "dictionary",
+				baseUrl + "/" + DictionaryWebservice.PATH, node.getAdditionalIcdNode());
 
 		Link previous = null;
 		if (node.getPrevious().isPresent())
@@ -76,26 +77,26 @@ public class AlphaIdDictionaryWebservice
 		if (nodeFactory.getOid() != null && !nodeFactory.getOid().isEmpty())
 			links.add(alt);
 		links.add(previous);
-		links.add(primaryIcdNode);
-		links.add(asterixIcdNode);
-		links.add(additionalIcdNode);
+		primaryIcdNode.ifPresent(links::add);
+		asterixIcdNode.ifPresent(links::add);
+		additionalIcdNode.ifPresent(links::add);
 		links.add(parent);
 		links.addAll(childrenHrefs);
 
 		return new AlphaIdNodeDto(links, nodeFactory.getOid(), nodeFactory.getName(), node.getCode(), node.getLabel());
 	}
 
-	private Link toNodeLink(String rel, String type, String baseUrl, IcdNode node)
+	private Optional<Link> toNodeLink(String rel, String type, String baseUrl, Optional<IcdNode> optionalNode)
 	{
-		if (node == null)
-			return null;
+		return optionalNode.map(node ->
+		{
+			IcdNodeFactory icdNodeNodeFactory = icdService.getNodeFactory(node.getVersion());
+			int icdNodeRootNodePathLength = icdNodeNodeFactory.getRootNode().getPath().length();
 
-		IcdNodeFactory icdNodeNodeFactory = icdService.getNodeFactory(node.getVersion());
-		int icdNodeRootNodePathLength = icdNodeNodeFactory.getRootNode().getPath().length();
-
-		return toNodeLink(rel, type, node.getCode() + " (" + node.getLabel() + ")", baseUrl, "icd-10-gm",
-				icdNodeNodeFactory.getSortIndex(),
-				node.getPath().substring(icdNodeRootNodePathLength, node.getPath().length()));
+			return toNodeLink(rel, type, node.getCode() + " (" + node.getLabel() + ")", baseUrl, "icd-10-gm",
+					icdNodeNodeFactory.getSortIndex(),
+					node.getPath().substring(icdNodeRootNodePathLength, node.getPath().length()));
+		});
 	}
 
 	private Link toNodeLink(String rel, String type, String label, String baseUrl, String icdVocabulary,
