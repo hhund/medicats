@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import de.gecko.medicats.alphaid.AlphaIdService;
 import de.gecko.medicats.icd10.IcdService;
 import de.gecko.medicats.ops.OpsService;
@@ -28,5 +29,6 @@ public class FhirServlet extends RestfulServer
 		resourceProviders.add(new CodeSystemProvider(icdService, opsService, alphaIdService));
 		
 		setResourceProviders(resourceProviders);
+		setInterceptors(new ResponseHighlighterInterceptor());
 	}
 }
