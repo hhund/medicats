@@ -6,13 +6,13 @@ Medical classification and terminology systems library for Java 1.8
 The following classification and terminologies are currently supported by medicats
 
 ##### ICD 10
-SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015, GM 2016, GM 2017
+SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015, GM 2016, GM 2017, GM 2018
 
 ##### OPS
-SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017
+SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018
 
 ##### Alpha-ID
-2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017
+2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018
 
 #### License
 
@@ -71,9 +71,13 @@ A current version of the medicats webservice (module medicats-web) can be access
 
 ##### ICD
 
+###### ICD 10 GM 2018
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2018/systematik/x1gec2018.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2018/metadaten-ueberleitung/x1gut2018.zip
+
 ###### ICD 10 GM 2017
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2017/systematik/x1gec2017.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/version2017/metadaten-ueberleitung/x1gut2017.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2017/systematik/x1gec2017.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2017/metadaten-ueberleitung/x1gut2017.zip
 
 ###### ICD 10 GM 2016
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-gm/vorgaenger/version2016/systematik/x1gec2016.zip
@@ -137,9 +141,13 @@ A current version of the medicats webservice (module medicats-web) can be access
 
 ##### OPS
 
+###### OPS 2018
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2018/systematik/p1sec2018.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2018/metadaten-ueberleitung/p1sut2018.zip
+
 ###### OPS 2017
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2017/systematik/p1sec2017.zip
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/version2017/metadaten-ueberleitung/p1sut2017.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2017/systematik/p1sec2017.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2017/metadaten-ueberleitung/p1sut2017.zip
 
 ###### OPS 2016
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/ops/vorgaenger/version2016/systematik/p1sec2016.zip
@@ -204,8 +212,11 @@ A current version of the medicats webservice (module medicats-web) can be access
 
 ##### Alpha-ID
 
+###### 2018
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2018/alphaid2018.zip
+
 ###### 2017
-- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/version2017/alphaid2017.zip
+- http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2017.zip
 
 ###### 2016
 - http://www.dimdi.de/dynamic/de/klassi/downloadcenter/alpha-id/vorgaenger/alphaid2016.zip
