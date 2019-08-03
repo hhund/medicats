@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.gecko.medicats.FileSource;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.ClaMLReader;
 import de.gecko.medicats.claml.Claml;
@@ -16,7 +17,6 @@ import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.claml.SubClass;
 import de.gecko.medicats.claml.ValidModifierClass;
 import de.gecko.medicats.icd10.AbstractIcdNodeFactory;
-import de.gecko.medicats.icd10.FileSource;
 
 public abstract class AbstractClamlIcdNodeFactory extends AbstractIcdNodeFactory
 {

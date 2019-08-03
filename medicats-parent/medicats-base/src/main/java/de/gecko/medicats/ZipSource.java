@@ -1,4 +1,4 @@
-package de.gecko.medicats.icd10;
+package de.gecko.medicats;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;

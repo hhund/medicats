@@ -11,8 +11,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.gecko.medicats.FileSource;
 import de.gecko.medicats.icd10.AbstractIcdNodeFactory;
-import de.gecko.medicats.icd10.FileSource;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeType;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeUsage;
 

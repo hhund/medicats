@@ -1,5 +1,6 @@
 package de.gecko.medicats.icd10;
 
+import de.gecko.medicats.FileSource;
 import de.gecko.medicats.PreviousCodeMappings;
 
 public abstract class AbstractIcdNodeFactory implements IcdNodeFactory

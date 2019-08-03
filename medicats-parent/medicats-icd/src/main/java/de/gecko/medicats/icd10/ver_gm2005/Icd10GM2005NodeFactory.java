@@ -6,12 +6,12 @@ import java.util.stream.Stream;
 
 import org.w3c.dom.Element;
 
-import de.gecko.medicats.icd10.FileSource;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeType;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeUsage;
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.icd10.IcdNodeFactory;
 import de.gecko.medicats.icd10.IcdNodeWalker;
-import de.gecko.medicats.icd10.ZipSource;
 import de.gecko.medicats.icd10.sgml.AbstractSgmlIcdNodeFactory;
 import de.gecko.medicats.icd10.sgml.SgmlIcdNode;
 

@@ -1,9 +1,9 @@
 package de.gecko.medicats.icd10.ver_gm2013;
 
-import de.gecko.medicats.icd10.FileSource;
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.icd10.IcdNodeFactory;
 import de.gecko.medicats.icd10.IcdNodeWalker;
-import de.gecko.medicats.icd10.ZipSource;
 import de.gecko.medicats.icd10.claml.AbstractClamlIcdNodeFactory;
 
 public class Icd10GM2013NodeFactory extends AbstractClamlIcdNodeFactory implements IcdNodeFactory

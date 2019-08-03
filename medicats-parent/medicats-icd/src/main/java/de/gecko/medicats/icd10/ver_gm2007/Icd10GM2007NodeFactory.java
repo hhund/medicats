@@ -3,10 +3,10 @@ package de.gecko.medicats.icd10.ver_gm2007;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import de.gecko.medicats.icd10.FileSource;
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.icd10.IcdNodeFactory;
 import de.gecko.medicats.icd10.IcdNodeWalker;
-import de.gecko.medicats.icd10.ZipSource;
 import de.gecko.medicats.icd10.sgml.AbstractSgmlIcdNodeFactory;
 
 public class Icd10GM2007NodeFactory extends AbstractSgmlIcdNodeFactory implements IcdNodeFactory
