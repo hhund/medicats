@@ -1,18 +1,21 @@
 package de.gecko.medicats.ops.ver_2008;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.ops.OpsNodeFactory;
 import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.sgml.AbstractSgmlOpsNodeFactory;
 
 public class Ops2008NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsNodeFactory
 {
-	private static final String SGML_RESOURCE_FILENAME = "OP301.SGM";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "umsteigererw20072008.txt";
-	private static final String PREVIOUS_VERSION = "ops2007";
-	private static final String VERSION = "ops2008";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2008.zip", 1640621382L);
+
+	private final FileSource sgml = new FileSource(zip, "ops2008erw", "p1ees2008", "Klassifikationsdateien",
+			"OP301.SGM");
+	private FileSource transitionFile = new FileSource(zip, "ops2008erw", "p1ueberw2007_2008", "Klassifikationsdateien",
+			"umsteigererw20072008.txt");
+	private FileSource systFile = new FileSource(zip, "ops2008erw", "p1ueberw2007_2008", "Klassifikationsdateien",
+			"opserw2008.txt");
 
 	@Override
 	public String getName()
@@ -27,9 +30,15 @@ public class Ops2008NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	}
 
 	@Override
+	public String getPreviousVersion()
+	{
+		return "ops2007";
+	}
+
+	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "ops2008";
 	}
 
 	@Override
@@ -39,21 +48,27 @@ public class Ops2008NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	}
 
 	@Override
-	protected String getSgmlFileName()
+	protected FileSource getSgml()
 	{
-		return SGML_RESOURCE_FILENAME;
+		return sgml;
 	}
 
 	@Override
-	public String getPreviousVersion()
+	protected FileSource getTransitionFile()
 	{
-		return PREVIOUS_VERSION;
+		return transitionFile;
 	}
 
 	@Override
-	protected String getPreviousCodesFileName()
+	protected FileSource getSystFile()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return systFile;
+	}
+
+	@Override
+	public OpsNodeWalker createNodeWalker()
+	{
+		return new Ops2008NodeWalker(getRootNode());
 	}
 
 	@Override
@@ -72,47 +87,5 @@ public class Ops2008NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	protected int getCurrentCodesBackwardsCompatibleColumn()
 	{
 		return Integer.MIN_VALUE;
-	}
-
-	@Override
-	public OpsNodeWalker createNodeWalker()
-	{
-		return new Ops2008NodeWalker(getRootNode());
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1ees2008.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 3679931325L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1ueberw2007_2008.zip");
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return 1217639680L;
-	}
-
-	@Override
-	protected Path getSgmlFileNamePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", getSgmlFileName());
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("Klassifikationsdateien", getPreviousCodesFileName());
 	}
 }

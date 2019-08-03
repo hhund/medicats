@@ -1,18 +1,19 @@
 package de.gecko.medicats.ops.ver_2006;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.ops.OpsNodeFactory;
 import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.sgml.AbstractSgmlOpsNodeFactory;
 
 public class Ops2006NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsNodeFactory
 {
-	private static final String SGML_RESOURCE_FILENAME = "OP301.SGM";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "UmsteigerErweitert.txt";
-	private static final String PREVIOUS_VERSION = "ops2005";
-	private static final String VERSION = "ops2006";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2006.zip", 2033774077L);
+
+	private final FileSource sgml = new FileSource(zip, "ops2006erw", "p1ees2006", "OP301.SGM");
+	private FileSource transitionFile = new FileSource(zip, "ops2006erw", "p1ueberw2005_2006",
+			"UmsteigerErweitert.txt");
+	private FileSource systFile = new FileSource(zip, "ops2006erw", "p1ueberw2005_2006", "OPS2006.txt");
 
 	@Override
 	public String getName()
@@ -27,9 +28,15 @@ public class Ops2006NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	}
 
 	@Override
+	public String getPreviousVersion()
+	{
+		return "ops2005";
+	}
+
+	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "ops2006";
 	}
 
 	@Override
@@ -39,21 +46,27 @@ public class Ops2006NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	}
 
 	@Override
-	protected String getSgmlFileName()
+	protected FileSource getSgml()
 	{
-		return SGML_RESOURCE_FILENAME;
+		return sgml;
 	}
 
 	@Override
-	public String getPreviousVersion()
+	protected FileSource getTransitionFile()
 	{
-		return PREVIOUS_VERSION;
+		return transitionFile;
 	}
 
 	@Override
-	protected String getPreviousCodesFileName()
+	protected FileSource getSystFile()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return systFile;
+	}
+
+	@Override
+	public OpsNodeWalker createNodeWalker()
+	{
+		return new Ops2006NodeWalker(getRootNode());
 	}
 
 	@Override
@@ -72,47 +85,5 @@ public class Ops2006NodeFactory extends AbstractSgmlOpsNodeFactory implements Op
 	protected int getCurrentCodesBackwardsCompatibleColumn()
 	{
 		return Integer.MIN_VALUE;
-	}
-
-	@Override
-	public OpsNodeWalker createNodeWalker()
-	{
-		return new Ops2006NodeWalker(getRootNode());
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1ees2006.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 1258873145L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1ueberw2005_2006.zip");
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return 1278310663L;
-	}
-
-	@Override
-	protected Path getSgmlFileNamePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath(getSgmlFileName());
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath(getPreviousCodesFileName());
 	}
 }

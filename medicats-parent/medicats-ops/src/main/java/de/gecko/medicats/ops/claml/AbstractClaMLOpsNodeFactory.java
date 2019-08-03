@@ -1,20 +1,16 @@
 package de.gecko.medicats.ops.claml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.gecko.medicats.claml.Claml;
-import de.gecko.medicats.claml.ClamlClass;
+import de.gecko.medicats.FileSource;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.ClaMLReader;
+import de.gecko.medicats.claml.Claml;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ModifiedBy;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.claml.SubClass;
@@ -23,45 +19,19 @@ import de.gecko.medicats.ops.AbstractOpsNodeFactory;
 
 public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 {
-	private Claml claML;
+	private Claml claml;
 	private ClaMLOpsNodeRoot root;
 
-	protected abstract String getXmlResourceFileName();
+	protected abstract FileSource getClamlXml();
 
-	protected InputStream getClaMLDtd()
+	protected abstract FileSource getClamlDtd();
+
+	protected Claml getClaml()
 	{
-		try
-		{
-			return Files.newInputStream(getClaMLDtdPath(getTaxonomyZip()));
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
+		if (claml == null)
+			claml = ClaMLReader.read(getClamlXml().getInputStream(), getClamlDtd().getInputStream());
 
-	protected abstract Path getClaMLDtdPath(FileSystem taxonomyZip);
-
-	protected InputStream getXmlResource()
-	{
-		try
-		{
-			return Files.newInputStream(getXmlResourcePath(getTaxonomyZip()));
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected abstract Path getXmlResourcePath(FileSystem taxonomyZip);
-
-	protected Claml getClaML()
-	{
-		if (claML == null)
-			claML = ClaMLReader.read(getXmlResource(), getClaMLDtd());
-
-		return claML;
+		return claml;
 	}
 
 	@Override
@@ -69,19 +39,19 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 	{
 		if (root == null)
 		{
-			Claml claML = getClaML();
-			ClaMLOpsNodeRoot root = new ClaMLOpsNodeRoot(claML, getVersion(), getPreviousCodes(), getPreviousVersion());
+			Claml claml = getClaml();
+			ClaMLOpsNodeRoot root = new ClaMLOpsNodeRoot(claml, getVersion(), getPreviousCodes(), getPreviousVersion());
 
-			Optional<ClaMLClassKind> chapterKind = claML.getClaMLClassKinds().getClaMLClassKinds().stream()
+			Optional<ClaMLClassKind> chapterKind = claml.getClaMLClassKinds().getClaMLClassKinds().stream()
 					.filter(k -> "chapter".equals(k.getName())).findFirst();
 
-			List<ClamlClass> chapters = claML.getClaMLClasses().stream()
+			List<ClamlClass> chapters = claml.getClaMLClasses().stream()
 					.filter(c -> c.getKind().equals(chapterKind.get())).collect(Collectors.toList());
 
-			Map<String, ClamlClass> clamlClassesByCode = claML.getClaMLClasses().parallelStream()
+			Map<String, ClamlClass> clamlClassesByCode = claml.getClaMLClasses().parallelStream()
 					.collect(Collectors.toMap(c -> c.getCode(), Function.identity()));
 
-			Map<String, List<ModifierClass>> modifierClassesByModifier = claML.getModifierClasses().stream()
+			Map<String, List<ModifierClass>> modifierClassesByModifier = claml.getModifierClasses().stream()
 					.collect(Collectors.groupingBy(c -> c.getModifier()));
 
 			for (ClamlClass chapter : chapters)
@@ -139,11 +109,11 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 										.filter(code2 -> code2.getCode().length() > 2
 												&& code2.getCode().startsWith(vMod1.getCode()))
 										.forEach(vMod2 ->
-								{
-									ModifierClass modifier2 = byCode.get(vMod2.getCode());
-									if (modifier2 != null)
-										ClaMLOpsNode.createNode(withPrimaryModifier, clamlClass, modifier2);
-								});
+										{
+											ModifierClass modifier2 = byCode.get(vMod2.getCode());
+											if (modifier2 != null)
+												ClaMLOpsNode.createNode(withPrimaryModifier, clamlClass, modifier2);
+										});
 							});
 				}
 				else if (node.getCodeLength() == 7)

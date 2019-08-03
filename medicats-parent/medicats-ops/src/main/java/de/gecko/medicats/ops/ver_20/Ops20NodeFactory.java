@@ -1,17 +1,17 @@
 package de.gecko.medicats.ops.ver_20;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.ops.OpsNodeFactory;
 import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.sgml.AbstractSgmlOpsNodeFactory;
 
 public class Ops20NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsNodeFactory
 {
-	private static final String SGML_RESOURCE_FILENAME = "OP301.sgm";
-	private static final String PREVIOUS_VERSION = "ops11";
-	private static final String VERSION = "ops20";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops20.zip", 4097034323L);
+
+	private final FileSource sgml = new FileSource(zip, "p1ses2_0", "OP301.sgm");
+	private FileSource systFile = new FileSource(zip, "p1ueb11_20_v11", "Opsv20.txt");
 
 	@Override
 	public String getName()
@@ -26,9 +26,15 @@ public class Ops20NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsN
 	}
 
 	@Override
+	public String getPreviousVersion()
+	{
+		return "ops11";
+	}
+
+	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "ops20";
 	}
 
 	@Override
@@ -38,62 +44,26 @@ public class Ops20NodeFactory extends AbstractSgmlOpsNodeFactory implements OpsN
 	}
 
 	@Override
-	protected String getSgmlFileName()
+	protected FileSource getSgml()
 	{
-		return SGML_RESOURCE_FILENAME;
+		return sgml;
 	}
 
 	@Override
-	public String getPreviousVersion()
-	{
-		return PREVIOUS_VERSION;
-	}
-
-	@Override
-	protected String getPreviousCodesFileName()
+	protected FileSource getTransitionFile()
 	{
 		return null;
+	}
+
+	@Override
+	protected FileSource getSystFile()
+	{
+		return systFile;
 	}
 
 	@Override
 	public OpsNodeWalker createNodeWalker()
 	{
 		return new Ops20NodeWalker(getRootNode());
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1ses2_0.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 543381695L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return null; // No previous version
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return Long.MIN_VALUE; // No previous version
-	}
-
-	@Override
-	protected Path getSgmlFileNamePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath(getSgmlFileName());
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return null; // No previous version
 	}
 }

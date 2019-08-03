@@ -1,8 +1,6 @@
 package de.gecko.medicats.ops.ver_2007;
 
 import java.nio.charset.Charset;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,12 +12,6 @@ public class Ops2007Test extends AbstractOpsTest
 	protected String getVersion()
 	{
 		return "ops2007";
-	}
-
-	@Override
-	protected Path getSystFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("Klassifikationsdateien", "opserw2007.txt");
 	}
 
 	@Override

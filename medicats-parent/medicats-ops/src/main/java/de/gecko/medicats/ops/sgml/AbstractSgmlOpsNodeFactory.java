@@ -1,10 +1,6 @@
 package de.gecko.medicats.ops.sgml;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +10,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.gecko.medicats.FileSource;
 import de.gecko.medicats.ops.AbstractOpsNodeFactory;
 import de.gecko.medicats.ops.OpsNode;
 import de.gecko.medicats.ops.OpsNode.OpsNodeType;
@@ -22,21 +19,7 @@ public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 {
 	private SgmlOpsNodeRoot root;
 
-	protected abstract String getSgmlFileName();
-
-	protected abstract Path getSgmlFileNamePath(FileSystem taxonomyZip);
-
-	protected InputStream getSgmlInputStream()
-	{
-		try
-		{
-			return Files.newInputStream(getSgmlFileNamePath(getTaxonomyZip()));
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
+	protected abstract FileSource getSgml();
 
 	@Override
 	public synchronized OpsNode getRootNode()
@@ -47,7 +30,7 @@ public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 
 			try
 			{
-				Element rootElement = OpsSgmlReader.read(getSgmlInputStream());
+				Element rootElement = OpsSgmlReader.read(getSgml().getInputStream());
 				List<Element> kaps = getElementsByTagName(rootElement, "KAP");
 
 				for (Element kap : kaps)

@@ -1,10 +1,10 @@
 package de.gecko.medicats.ops.ver_2017;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.ops.OpsNodeFactory;
@@ -14,33 +14,37 @@ import de.gecko.medicats.ops.claml.ClaMLOpsNode;
 
 public class Ops2017NodeFactory extends AbstractClaMLOpsNodeFactory implements OpsNodeFactory
 {
-	private static final String XML_RESOURCE_FILENAME = "ops2017syst_claml_20161019.xml";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "ops2017syst_umsteiger_2016_2017.txt";
-	private static final String PREVIOUS_VERSION = "ops2016";
-	private static final String VERSION = "ops2017";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2017.zip", 1566003932L);
+
+	private final FileSource clamlDtd = new FileSource(zip, "p1sec2017", "Klassifikationsdateien", "ClaML.dtd");
+	private final FileSource clamlXml = new FileSource(zip, "p1sec2017", "Klassifikationsdateien",
+			"ops2017syst_claml_20161019.xml");
+	private FileSource transitionFile = new FileSource(zip, "p1sut2017", "Klassifikationsdateien",
+			"ops2017syst_umsteiger_2016_2017.txt");
+	private FileSource systFile = new FileSource(zip, "p1sut2017", "Klassifikationsdateien", "ops2017syst.txt");
 
 	@Override
 	public String getName()
 	{
 		return "OPS 2017";
 	}
-	
+
 	@Override
 	public String getOid()
 	{
 		return "1.2.276.0.76.5.464";
 	}
-	
+
 	@Override
-	protected String getXmlResourceFileName()
+	public String getPreviousVersion()
 	{
-		return XML_RESOURCE_FILENAME;
+		return "ops2016";
 	}
 
 	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "ops2017";
 	}
 
 	@Override
@@ -50,15 +54,27 @@ public class Ops2017NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	}
 
 	@Override
-	public String getPreviousVersion()
+	protected FileSource getClamlXml()
 	{
-		return PREVIOUS_VERSION;
+		return clamlXml;
 	}
 
 	@Override
-	protected String getPreviousCodesFileName()
+	protected FileSource getClamlDtd()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return clamlDtd;
+	}
+
+	@Override
+	protected FileSource getTransitionFile()
+	{
+		return transitionFile;
+	}
+
+	@Override
+	protected FileSource getSystFile()
+	{
+		return systFile;
 	}
 
 	@Override
@@ -88,53 +104,11 @@ public class Ops2017NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	}
 
 	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1sec2017.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 2630446764L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1sut2017.zip");
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return 520553580L;
-	}
-
-	@Override
-	protected Path getClaMLDtdPath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", "ClaML.dtd");
-	}
-
-	@Override
-	protected Path getXmlResourcePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", getXmlResourceFileName());
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("Klassifikationsdateien", getPreviousCodesFileName());
-	}
-	
-	@Override
 	protected int getPreviousCodesForwardsCompatibleColumn()
 	{
 		return 4;
 	}
-	
+
 	@Override
 	protected int getCurrentCodesBackwardsCompatibleColumn()
 	{
