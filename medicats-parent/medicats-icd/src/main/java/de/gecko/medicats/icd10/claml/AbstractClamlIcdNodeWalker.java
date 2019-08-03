@@ -7,9 +7,9 @@ import java.util.List;
 import de.gecko.medicats.icd10.AbstractIcdNodeWalker;
 import de.gecko.medicats.icd10.IcdNode;
 
-public class AbstractClaMLIcdNodeWalker extends AbstractIcdNodeWalker
+public class AbstractClamlIcdNodeWalker extends AbstractIcdNodeWalker
 {
-	public AbstractClaMLIcdNodeWalker(ClaMLIcdNode root)
+	public AbstractClamlIcdNodeWalker(ClamlIcdNode root)
 	{
 		super(root);
 	}

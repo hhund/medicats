@@ -15,7 +15,7 @@ public interface VersionedNodeFactory<N extends VersionedNode<N>, W extends Node
 
 	String getPreviousVersion();
 
-	strictfp static Path testChecksum(long expectedChecksum, Path file)
+	static Path testChecksum(long expectedChecksum, Path file)
 	{
 		try
 		{

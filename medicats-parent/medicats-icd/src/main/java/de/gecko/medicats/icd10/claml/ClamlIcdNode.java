@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.gecko.medicats.claml.ClaMLClass;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.claml.Reference;
@@ -19,7 +19,7 @@ import de.gecko.medicats.claml.Term;
 import de.gecko.medicats.claml.UsageKind;
 import de.gecko.medicats.icd10.IcdNode;
 
-public class ClaMLIcdNode extends IcdNode
+public class ClamlIcdNode extends IcdNode
 {
 	/**
 	 * @param parent
@@ -28,7 +28,7 @@ public class ClaMLIcdNode extends IcdNode
 	 *            not <code>null</code>
 	 * @return
 	 */
-	public static ClaMLIcdNode createNode(ClaMLIcdNode parent, ClaMLClass clamlClass)
+	public static ClamlIcdNode createNode(ClamlIcdNode parent, ClamlClass clamlClass)
 	{
 		return createNodeAndAddToParent(Objects.requireNonNull(parent), Objects.requireNonNull(clamlClass), null, null);
 	}
@@ -42,7 +42,7 @@ public class ClaMLIcdNode extends IcdNode
 	 *            not <code>null</code>
 	 * @return
 	 */
-	public static ClaMLIcdNode createNode(ClaMLIcdNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier)
+	public static ClamlIcdNode createNode(ClamlIcdNode parent, ClamlClass clamlClass, ModifierClass primaryModifier)
 	{
 		return createNodeAndAddToParent(Objects.requireNonNull(parent), Objects.requireNonNull(clamlClass),
 				Objects.requireNonNull(primaryModifier), null);
@@ -59,28 +59,28 @@ public class ClaMLIcdNode extends IcdNode
 	 *            not <code>null</code>
 	 * @return
 	 */
-	public static ClaMLIcdNode createNode(ClaMLIcdNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	public static ClamlIcdNode createNode(ClamlIcdNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			ModifierClass secondaryModifier)
 	{
 		return createNodeAndAddToParent(Objects.requireNonNull(parent), Objects.requireNonNull(clamlClass),
 				Objects.requireNonNull(primaryModifier), Objects.requireNonNull(secondaryModifier));
 	}
 
-	private static ClaMLIcdNode createNodeAndAddToParent(ClaMLIcdNode parent, ClaMLClass clamlClass,
+	private static ClamlIcdNode createNodeAndAddToParent(ClamlIcdNode parent, ClamlClass clamlClass,
 			ModifierClass primaryModifier, ModifierClass secondaryModifier)
 	{
-		ClaMLIcdNode node = new ClaMLIcdNode(parent, clamlClass, primaryModifier, secondaryModifier);
+		ClamlIcdNode node = new ClamlIcdNode(parent, clamlClass, primaryModifier, secondaryModifier);
 		node.addToParent();
 		return node;
 	}
 
-	private final ClaMLClass clamlClass;
+	private final ClamlClass clamlClass;
 	private final ModifierClass primaryModifier;
 	private final ModifierClass secondaryModifier;
 
 	private String code;
 
-	protected ClaMLIcdNode(ClaMLIcdNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	protected ClamlIcdNode(ClamlIcdNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			ModifierClass secondaryModifier)
 	{
 		super(parent);
@@ -90,9 +90,9 @@ public class ClaMLIcdNode extends IcdNode
 	}
 
 	@Override
-	public ClaMLIcdNode getParent()
+	public ClamlIcdNode getParent()
 	{
-		return (ClaMLIcdNode) super.getParent();
+		return (ClamlIcdNode) super.getParent();
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class ClaMLIcdNode extends IcdNode
 			throw new IllegalStateException("Unknown usage kind");
 	}
 
-	public ClaMLClass getClamlClass()
+	public ClamlClass getClamlClass()
 	{
 		return clamlClass;
 	}

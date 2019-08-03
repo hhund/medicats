@@ -1,17 +1,11 @@
 package de.gecko.medicats.icd10.ver_sgbv13;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import de.gecko.medicats.icd10.AbstractIcd10GMTest;
-import de.gecko.medicats.icd10.AbstractIcdNodeFactory;
 
 public class Icd10SGBV13Test extends AbstractIcd10GMTest
 {
@@ -19,30 +13,6 @@ public class Icd10SGBV13Test extends AbstractIcd10GMTest
 	protected String getVersion()
 	{
 		return "icd10sgbv13";
-	}
-
-	@Override
-	protected Path getSystFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("icd10v13.txt");
-	}
-
-	@Override
-	protected FileSystem getTransitionZip(AbstractIcdNodeFactory f)
-	{
-		Path basePath = Paths.get(System.getProperty(AbstractIcdNodeFactory.DIMDI_FILES_BASE_PATH_PARAM,
-				AbstractIcdNodeFactory.DIMDI_FILES_BASE_PATH_DEFAULT_VALUE));
-
-		Path zip = basePath.resolve("x1ueb13_20_v11.zip");
-
-		try
-		{
-			return FileSystems.newFileSystem(zip, null);
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override

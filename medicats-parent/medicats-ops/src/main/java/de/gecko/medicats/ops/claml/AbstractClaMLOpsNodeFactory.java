@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.gecko.medicats.claml.ClaML;
-import de.gecko.medicats.claml.ClaMLClass;
+import de.gecko.medicats.claml.Claml;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.ClaMLReader;
 import de.gecko.medicats.claml.ModifiedBy;
@@ -23,7 +23,7 @@ import de.gecko.medicats.ops.AbstractOpsNodeFactory;
 
 public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 {
-	private ClaML claML;
+	private Claml claML;
 	private ClaMLOpsNodeRoot root;
 
 	protected abstract String getXmlResourceFileName();
@@ -56,7 +56,7 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 
 	protected abstract Path getXmlResourcePath(FileSystem taxonomyZip);
 
-	protected ClaML getClaML()
+	protected Claml getClaML()
 	{
 		if (claML == null)
 			claML = ClaMLReader.read(getXmlResource(), getClaMLDtd());
@@ -69,22 +69,22 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 	{
 		if (root == null)
 		{
-			ClaML claML = getClaML();
+			Claml claML = getClaML();
 			ClaMLOpsNodeRoot root = new ClaMLOpsNodeRoot(claML, getVersion(), getPreviousCodes(), getPreviousVersion());
 
 			Optional<ClaMLClassKind> chapterKind = claML.getClaMLClassKinds().getClaMLClassKinds().stream()
 					.filter(k -> "chapter".equals(k.getName())).findFirst();
 
-			List<ClaMLClass> chapters = claML.getClaMLClasses().stream()
+			List<ClamlClass> chapters = claML.getClaMLClasses().stream()
 					.filter(c -> c.getKind().equals(chapterKind.get())).collect(Collectors.toList());
 
-			Map<String, ClaMLClass> clamlClassesByCode = claML.getClaMLClasses().parallelStream()
+			Map<String, ClamlClass> clamlClassesByCode = claML.getClaMLClasses().parallelStream()
 					.collect(Collectors.toMap(c -> c.getCode(), Function.identity()));
 
 			Map<String, List<ModifierClass>> modifierClassesByModifier = claML.getModifierClasses().stream()
 					.collect(Collectors.groupingBy(c -> c.getModifier()));
 
-			for (ClaMLClass chapter : chapters)
+			for (ClamlClass chapter : chapters)
 				createOpsNodes(root, chapter, clamlClassesByCode, modifierClassesByModifier);
 
 			this.root = root;
@@ -93,14 +93,14 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 		return root;
 	}
 
-	private void createOpsNodes(ClaMLOpsNode parent, ClaMLClass clamlClass, Map<String, ClaMLClass> clamlClassesByCode,
+	private void createOpsNodes(ClaMLOpsNode parent, ClamlClass clamlClass, Map<String, ClamlClass> clamlClassesByCode,
 			Map<String, List<ModifierClass>> modifierClassesByModifier)
 	{
 		ClaMLOpsNode node = createOpsNodes(parent, clamlClass, modifierClassesByModifier);
 
 		for (SubClass s : clamlClass.getSubClasses())
 		{
-			ClaMLClass clamlSubClass = clamlClassesByCode.get(s.getCode());
+			ClamlClass clamlSubClass = clamlClassesByCode.get(s.getCode());
 
 			if (clamlSubClass != null)
 				createOpsNodes(node, clamlSubClass, clamlClassesByCode, modifierClassesByModifier);
@@ -112,7 +112,7 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 		}
 	}
 
-	private ClaMLOpsNode createOpsNodes(ClaMLOpsNode parent, ClaMLClass clamlClass,
+	private ClaMLOpsNode createOpsNodes(ClaMLOpsNode parent, ClamlClass clamlClass,
 			Map<String, List<ModifierClass>> modifierClassesByModifier)
 	{
 		ClaMLOpsNode node = ClaMLOpsNode.createNode(parent, clamlClass);
@@ -176,7 +176,7 @@ public abstract class AbstractClaMLOpsNodeFactory extends AbstractOpsNodeFactory
 		return node;
 	}
 
-	protected abstract void createSpecialNode(ClaMLOpsNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	protected abstract void createSpecialNode(ClaMLOpsNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			List<ModifierClass> modifierClasses);
 
 	protected abstract boolean isSpecialCaseWithPrimaryModifier(String modifier);

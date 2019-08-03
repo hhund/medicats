@@ -8,9 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +64,7 @@ public abstract class AbstractIcd10GMTest
 		assertTrue(factory instanceof AbstractIcdNodeFactory);
 		AbstractIcdNodeFactory f = (AbstractIcdNodeFactory) factory;
 
-		List<String> icdCodes = readCodes(getSystFileInputStream(getTransitionZip(f))).stream().sorted()
+		List<String> icdCodes = readCodes(f.getSystFile().getInputStream()).stream().sorted()
 				.collect(Collectors.toList());
 
 		for (int i = 0; i < categories.size(); i++)
@@ -107,25 +104,6 @@ public abstract class AbstractIcd10GMTest
 
 		assertEquals(icdCodes.size(), categories.size());
 	}
-
-	protected FileSystem getTransitionZip(AbstractIcdNodeFactory f)
-	{
-		return f.getTransitionZip();
-	}
-
-	protected InputStream getSystFileInputStream(FileSystem fileSystem)
-	{
-		try
-		{
-			return Files.newInputStream(getSystFilePath(fileSystem));
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected abstract Path getSystFilePath(FileSystem transitionZip);
 
 	@Test
 	public void testExclusionsDistinct()

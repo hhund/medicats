@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-import de.gecko.medicats.claml.ClaMLClass;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.claml.AbstractClaMLOpsNodeFactory;
@@ -73,7 +73,7 @@ public class Ops2011NodeFactory extends AbstractClaMLOpsNodeFactory
 	}
 
 	@Override
-	protected void createSpecialNode(ClaMLOpsNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	protected void createSpecialNode(ClaMLOpsNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			List<ModifierClass> modifierClasses)
 	{
 		String superModifierCode = primaryModifier.getSuperClass().getCode();

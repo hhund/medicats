@@ -1,8 +1,6 @@
 package de.gecko.medicats.icd10.ver_gm2005;
 
 import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.List;
 
 import de.gecko.medicats.icd10.AbstractIcd10GMTest;
@@ -13,12 +11,6 @@ public class Icd10GM2005Test extends AbstractIcd10GMTest
 	protected String getVersion()
 	{
 		return "icd10gm2005";
-	}
-
-	@Override
-	protected Path getSystFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("ICD10V2005.txt");
 	}
 
 	@Override

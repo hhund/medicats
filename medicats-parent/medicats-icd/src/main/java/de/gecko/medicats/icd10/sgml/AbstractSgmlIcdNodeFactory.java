@@ -1,10 +1,6 @@
 package de.gecko.medicats.icd10.sgml;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.gecko.medicats.icd10.AbstractIcdNodeFactory;
+import de.gecko.medicats.icd10.FileSource;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeType;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeUsage;
 
@@ -24,31 +21,9 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 	private Element[] chapters;
 	private SgmlIcdNodeRoot root;
 
-	protected abstract String[] getChapterFileNames();
+	protected abstract int getChapterCount();
 
-	private int chapterCount()
-	{
-		return getChapterFileNames().length;
-	}
-
-	protected abstract Stream<Path> getChapterFileNamePaths(FileSystem taxonomyZip);
-
-	protected Stream<InputStream> getChapterInputStreams()
-	{
-		return getChapterFileNamePaths(getTaxonomyZip()).map(this::newInputStream);
-	}
-
-	private InputStream newInputStream(Path p)
-	{
-		try
-		{
-			return Files.newInputStream(p);
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
+	protected abstract Stream<FileSource> getChapterFiles();
 
 	/**
 	 * @param chapter
@@ -57,11 +32,12 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 	 */
 	protected synchronized Element getChapter(int chapter)
 	{
-		if (chapter < 1 || chapter > chapterCount())
+		if (chapter < 1 || chapter > getChapterCount())
 			throw new IndexOutOfBoundsException();
 
 		if (chapters == null)
-			chapters = getChapterInputStreams().map(SgmlChapterReader::read).toArray(Element[]::new);
+			chapters = getChapterFiles().map(FileSource::getInputStream).map(SgmlChapterReader::read)
+					.toArray(Element[]::new);
 
 		return chapters[chapter - 1];
 	}
@@ -85,7 +61,7 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 	{
 		try
 		{
-			for (int i = 1; i <= chapterCount(); i++)
+			for (int i = 1; i <= getChapterCount(); i++)
 				parseKap(root, getChapter(i));
 		}
 		catch (IOException e)

@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = { "metaElements", "identifier", "title", "authors", "variants", "clamlClassKinds",
 		"usageKinds", "rubricKinds", "modifier", "modifierClasses", "clamlClasses" })
 @XmlRootElement(name = "ClaML")
-public class ClaML
+public class Claml
 {
 	@XmlAttribute(name = "version", required = true)
 	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -54,7 +54,7 @@ public class ClaML
 	private List<ModifierClass> modifierClasses;
 
 	@XmlElement(name = "Class")
-	private List<ClaMLClass> clamlClasses;
+	private List<ClamlClass> clamlClasses;
 
 	public String getVersion()
 	{
@@ -138,7 +138,7 @@ public class ClaML
 	/**
 	 * @return unmodifiable list
 	 */
-	public List<ClaMLClass> getClaMLClasses()
+	public List<ClamlClass> getClaMLClasses()
 	{
 		if (clamlClasses == null)
 			clamlClasses = new ArrayList<>();

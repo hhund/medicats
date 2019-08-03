@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = { "metaElements", "superClasses", "subClasses", "modifiedByElements",
 		"excludeModifiers", "rubrics", "historyElements" })
 @XmlRootElement(name = "Class")
-public class ClaMLClass
+public class ClamlClass
 {
 	@XmlAttribute(name = "code", required = true)
 	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)

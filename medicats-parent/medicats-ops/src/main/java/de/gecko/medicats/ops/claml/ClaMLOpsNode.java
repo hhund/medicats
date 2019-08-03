@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.gecko.medicats.claml.ClaMLClass;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.claml.Reference;
@@ -26,7 +26,7 @@ public class ClaMLOpsNode extends OpsNode
 	 *            not <code>null</code>
 	 * @return
 	 */
-	public static ClaMLOpsNode createNode(ClaMLOpsNode parent, ClaMLClass clamlClass)
+	public static ClaMLOpsNode createNode(ClaMLOpsNode parent, ClamlClass clamlClass)
 	{
 		return createNodeAndAddToParent(Objects.requireNonNull(parent), Objects.requireNonNull(clamlClass), null, null);
 	}
@@ -40,7 +40,7 @@ public class ClaMLOpsNode extends OpsNode
 	 *            not <code>null</code>
 	 * @return
 	 */
-	public static ClaMLOpsNode createNode(ClaMLOpsNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier)
+	public static ClaMLOpsNode createNode(ClaMLOpsNode parent, ClamlClass clamlClass, ModifierClass primaryModifier)
 	{
 		return createNodeAndAddToParent(Objects.requireNonNull(parent), Objects.requireNonNull(clamlClass),
 				Objects.requireNonNull(primaryModifier), null);
@@ -57,14 +57,14 @@ public class ClaMLOpsNode extends OpsNode
 	 *            not <code>null</code>
 	 * @return
 	 */
-	public static ClaMLOpsNode createNode(ClaMLOpsNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	public static ClaMLOpsNode createNode(ClaMLOpsNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			ModifierClass secondaryModifier)
 	{
 		return createNodeAndAddToParent(Objects.requireNonNull(parent), Objects.requireNonNull(clamlClass),
 				Objects.requireNonNull(primaryModifier), Objects.requireNonNull(secondaryModifier));
 	}
 
-	private static ClaMLOpsNode createNodeAndAddToParent(ClaMLOpsNode parent, ClaMLClass clamlClass,
+	private static ClaMLOpsNode createNodeAndAddToParent(ClaMLOpsNode parent, ClamlClass clamlClass,
 			ModifierClass primaryModifier, ModifierClass secondaryModifier)
 	{
 		ClaMLOpsNode node = new ClaMLOpsNode(parent, clamlClass, primaryModifier, secondaryModifier);
@@ -72,13 +72,13 @@ public class ClaMLOpsNode extends OpsNode
 		return node;
 	}
 
-	private final ClaMLClass clamlClass;
+	private final ClamlClass clamlClass;
 	private final ModifierClass primaryModifier;
 	private final ModifierClass secondaryModifier;
 
 	private String code;
 
-	public ClaMLOpsNode(ClaMLOpsNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	public ClaMLOpsNode(ClaMLOpsNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			ModifierClass secondaryModifier)
 	{
 		super(parent);
@@ -114,7 +114,7 @@ public class ClaMLOpsNode extends OpsNode
 		return primaryModifier != null;
 	}
 
-	public ClaMLClass getClamlClass()
+	public ClamlClass getClamlClass()
 	{
 		return clamlClass;
 	}

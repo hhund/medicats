@@ -1,10 +1,5 @@
 package de.gecko.medicats.icd10.claml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -12,86 +7,61 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.gecko.medicats.claml.ClaML;
-import de.gecko.medicats.claml.ClaMLClass;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.ClaMLReader;
+import de.gecko.medicats.claml.Claml;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ModifiedBy;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.claml.SubClass;
 import de.gecko.medicats.claml.ValidModifierClass;
 import de.gecko.medicats.icd10.AbstractIcdNodeFactory;
+import de.gecko.medicats.icd10.FileSource;
 
-public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
+public abstract class AbstractClamlIcdNodeFactory extends AbstractIcdNodeFactory
 {
 	private static final List<String> DIABETES_MELLITUS = Arrays.asList("E10", "E11", "E12", "E13", "E14");
 	private static final String DIABETES_MELLITUS_MODIFIER_4 = "S04E10_4";
 	private static final String DIABETES_MELLITUS_MODIFIER_5 = "S04E10_5";
 	private static final String META_EXCLUDE_ON_PRECEDING_MODIFIER = "excludeOnPrecedingModifier";
 
-	private ClaML claML;
-	private ClaMLIcdNodeRoot root;
+	private Claml claml;
+	private ClamlIcdNodeRoot root;
 
-	protected abstract String getXmlResourceFileName();
+	protected abstract FileSource getClamlXml();
 
-	protected InputStream getClaMLDtd()
+	protected abstract FileSource getClamlDtd();
+
+	protected synchronized Claml getClaml()
 	{
-		try
-		{
-			return Files.newInputStream(getClaMLDtdPath(getTaxonomyZip()));
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
+		if (claml == null)
+			claml = ClaMLReader.read(getClamlXml().getInputStream(), getClamlDtd().getInputStream());
 
-	protected abstract Path getClaMLDtdPath(FileSystem taxonomyZip);
-
-	protected InputStream getXmlResource()
-	{
-		try
-		{
-			return Files.newInputStream(getXmlResourcePath(getTaxonomyZip()));
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected abstract Path getXmlResourcePath(FileSystem taxonomyZip);
-
-	protected synchronized ClaML getClaML()
-	{
-		if (claML == null)
-			claML = ClaMLReader.read(getXmlResource(), getClaMLDtd());
-
-		return claML;
+		return claml;
 	}
 
 	@Override
-	public synchronized ClaMLIcdNodeRoot getRootNode()
+	public synchronized ClamlIcdNodeRoot getRootNode()
 	{
 		if (root == null)
 		{
-			ClaML claML = getClaML();
-			ClaMLIcdNodeRoot root = new ClaMLIcdNodeRoot(claML, getVersion(), getSortIndex(), getPreviousCodes(),
+			Claml claml = getClaml();
+			ClamlIcdNodeRoot root = new ClamlIcdNodeRoot(claml, getVersion(), getSortIndex(), getPreviousCodes(),
 					getPreviousVersion());
 
-			Optional<ClaMLClassKind> chapterKind = claML.getClaMLClassKinds().getClaMLClassKinds().stream()
+			Optional<ClaMLClassKind> chapterKind = claml.getClaMLClassKinds().getClaMLClassKinds().stream()
 					.filter(k -> "chapter".equals(k.getName())).findFirst();
 
-			List<ClaMLClass> chapters = claML.getClaMLClasses().stream()
+			List<ClamlClass> chapters = claml.getClaMLClasses().stream()
 					.filter(c -> c.getKind().equals(chapterKind.get())).collect(Collectors.toList());
 
-			Map<String, ClaMLClass> icdClassesByCode = claML.getClaMLClasses().parallelStream()
+			Map<String, ClamlClass> icdClassesByCode = claml.getClaMLClasses().parallelStream()
 					.collect(Collectors.toMap(c -> c.getCode(), Function.identity()));
 
-			Map<String, List<ModifierClass>> modifierClassesByModifier = claML.getModifierClasses().stream()
+			Map<String, List<ModifierClass>> modifierClassesByModifier = claml.getModifierClasses().stream()
 					.collect(Collectors.groupingBy(c -> c.getModifier()));
 
-			for (ClaMLClass chapter : chapters)
+			for (ClamlClass chapter : chapters)
 				createIcdNodes(root, chapter, icdClassesByCode, modifierClassesByModifier);
 
 			this.root = root;
@@ -100,14 +70,14 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 		return root;
 	}
 
-	private void createIcdNodes(ClaMLIcdNode parent, ClaMLClass icdClass, Map<String, ClaMLClass> icdClassesByCode,
+	private void createIcdNodes(ClamlIcdNode parent, ClamlClass icdClass, Map<String, ClamlClass> icdClassesByCode,
 			Map<String, List<ModifierClass>> modifierClassesByModifier)
 	{
-		ClaMLIcdNode node = createIcdNodes(parent, icdClass, modifierClassesByModifier);
+		ClamlIcdNode node = createIcdNodes(parent, icdClass, modifierClassesByModifier);
 
 		for (SubClass s : icdClass.getSubClasses())
 		{
-			ClaMLClass icdSubClass = icdClassesByCode.get(s.getCode());
+			ClamlClass icdSubClass = icdClassesByCode.get(s.getCode());
 
 			if (icdSubClass != null)
 				createIcdNodes(node, icdSubClass, icdClassesByCode, modifierClassesByModifier);
@@ -119,10 +89,10 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 		}
 	}
 
-	private ClaMLIcdNode createIcdNodes(ClaMLIcdNode parent, ClaMLClass icdClass,
+	private ClamlIcdNode createIcdNodes(ClamlIcdNode parent, ClamlClass icdClass,
 			Map<String, List<ModifierClass>> modifierClassesByModifier)
 	{
-		ClaMLIcdNode node = ClaMLIcdNode.createNode(parent, icdClass);
+		ClamlIcdNode node = ClamlIcdNode.createNode(parent, icdClass);
 
 		if (icdClass.getModifiedByElements().size() == 1)
 		{
@@ -136,14 +106,14 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 				for (ValidModifierClass validModifier : modifiedBy.getValidModifierClasses())
 				{
 					ModifierClass primaryModifier = byCode.get(validModifier.getCode());
-					ClaMLIcdNode.createNode(node, icdClass, primaryModifier);
+					ClamlIcdNode.createNode(node, icdClass, primaryModifier);
 				}
 			}
 			else
 			{
 				for (ModifierClass primaryModifier : modifierClasses)
 				{
-					ClaMLIcdNode.createNode(node, icdClass, primaryModifier);
+					ClamlIcdNode.createNode(node, icdClass, primaryModifier);
 				}
 			}
 		}
@@ -158,12 +128,12 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 		return node;
 	}
 
-	protected boolean isSpecialCase(ClaMLClass icdClass)
+	protected boolean isSpecialCase(ClamlClass icdClass)
 	{
 		return DIABETES_MELLITUS.contains(icdClass.getCode()) && icdClass.getModifiedByElements().size() == 2;
 	}
 
-	protected void createSpecialNodes(ClaMLIcdNode node, ClaMLClass icdClass,
+	protected void createSpecialNodes(ClamlIcdNode node, ClamlClass icdClass,
 			Map<String, List<ModifierClass>> modifierClassesByModifier)
 	{
 		List<ModifiedBy> modifiedBy = icdClass.getModifiedByElements();
@@ -180,7 +150,7 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 
 			for (ModifierClass primaryModifier : modifiedByS04e104)
 			{
-				ClaMLIcdNode nodeWithPrimaryModifier = ClaMLIcdNode.createNode(node, icdClass, primaryModifier);
+				ClamlIcdNode nodeWithPrimaryModifier = ClamlIcdNode.createNode(node, icdClass, primaryModifier);
 
 				for (ModifierClass secondaryModifier : modifiedByS04e105)
 				{
@@ -188,7 +158,7 @@ public abstract class AbstractClaMLIcdNodeFactory extends AbstractIcdNodeFactory
 							.filter(m -> META_EXCLUDE_ON_PRECEDING_MODIFIER.equals(m.getName())).map(m -> m.getValue())
 							.anyMatch(v -> (primaryModifier.getModifier() + " " + primaryModifier.getCode()).equals(v)))
 					{
-						ClaMLIcdNode.createNode(nodeWithPrimaryModifier, icdClass, primaryModifier, secondaryModifier);
+						ClamlIcdNode.createNode(nodeWithPrimaryModifier, icdClass, primaryModifier, secondaryModifier);
 					}
 				}
 			}

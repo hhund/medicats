@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.gecko.medicats.PreviousCodeMappings;
-import de.gecko.medicats.claml.ClaML;
+import de.gecko.medicats.claml.Claml;
 import de.gecko.medicats.claml.ClaMLClassKind;
 import de.gecko.medicats.claml.RubricKind;
 import de.gecko.medicats.claml.UsageKind;
@@ -13,9 +13,9 @@ import de.gecko.medicats.icd10.IcdNodeFactory;
 import de.gecko.medicats.icd10.IcdNodeWalker;
 import de.gecko.medicats.icd10.IcdService;
 
-final class ClaMLIcdNodeRoot extends ClaMLIcdNode
+final class ClamlIcdNodeRoot extends ClamlIcdNode
 {
-	private final ClaML claML;
+	private final Claml claML;
 	private final String version;
 	private final int sortIndex;
 	private final PreviousCodeMappings mappings;
@@ -27,7 +27,7 @@ final class ClaMLIcdNodeRoot extends ClaMLIcdNode
 	private IcdNodeWalker previousNodeWalker;
 	private boolean previouseCodeSupported = true;
 
-	ClaMLIcdNodeRoot(ClaML claML, String version, int sortIndex, PreviousCodeMappings mappings, String previousVersion)
+	ClamlIcdNodeRoot(Claml claML, String version, int sortIndex, PreviousCodeMappings mappings, String previousVersion)
 	{
 		super(null, null, null, null);
 
