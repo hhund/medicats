@@ -1,18 +1,22 @@
 package de.gecko.medicats.icd10.ver_gm2009;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.icd10.IcdNodeFactory;
 import de.gecko.medicats.icd10.IcdNodeWalker;
-import de.gecko.medicats.icd10.claml.AbstractClaMLIcdNodeFactory;
+import de.gecko.medicats.icd10.claml.AbstractClamlIcdNodeFactory;
 
-public class Icd10GM2009NodeFactory extends AbstractClaMLIcdNodeFactory implements IcdNodeFactory
+public class Icd10GM2009NodeFactory extends AbstractClamlIcdNodeFactory implements IcdNodeFactory
 {
-	private static final String XML_RESOURCE_FILENAME = "icd10gm2009syst_claml_20080929.xml";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "umsteiger_icd10gmsyst2008_icd10gmsyst2009.txt";
-	private static final String PREVIOUS_VERSION = "icd10gm2008";
-	private static final String VERSION = "icd10gm2009";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "icd10gm2009.zip", 394157295L);
+
+	private final FileSource clamlDtd = new FileSource(zip, "x1gex2009", "Klassifikationsdateien", "claml.dtd");
+	private final FileSource clamlXml = new FileSource(zip, "x1gex2009", "Klassifikationsdateien",
+			"icd10gm2009syst_claml_20080929.xml");
+	private FileSource transitionFile = new FileSource(zip, "x1ueb2008_2009", "Klassifikationsdateien",
+			"umsteiger_icd10gmsyst2008_icd10gmsyst2009.txt");
+	private FileSource systFile = new FileSource(zip, "x1ueb2008_2009", "Klassifikationsdateien",
+			"icd10gmsyst2009.txt");
 
 	@Override
 	public String getName()
@@ -29,13 +33,13 @@ public class Icd10GM2009NodeFactory extends AbstractClaMLIcdNodeFactory implemen
 	@Override
 	public String getPreviousVersion()
 	{
-		return PREVIOUS_VERSION;
+		return "icd10gm2008";
 	}
 
 	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "icd10gm2009";
 	}
 
 	@Override
@@ -45,62 +49,32 @@ public class Icd10GM2009NodeFactory extends AbstractClaMLIcdNodeFactory implemen
 	}
 
 	@Override
-	protected String getXmlResourceFileName()
+	protected FileSource getClamlXml()
 	{
-		return XML_RESOURCE_FILENAME;
+		return clamlXml;
 	}
 
 	@Override
-	protected String getPreviousCodesFileName()
+	protected FileSource getClamlDtd()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return clamlDtd;
+	}
+
+	@Override
+	protected FileSource getSystFile()
+	{
+		return systFile;
+	}
+
+	@Override
+	protected FileSource getTransitionFile()
+	{
+		return transitionFile;
 	}
 
 	@Override
 	public IcdNodeWalker createNodeWalker()
 	{
 		return new Icd10GM2009NodeWalker(getRootNode());
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("x1gex2009.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 3020984043L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return basePath.resolve("x1ueb2008_2009.zip");
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return 558452344L;
-	}
-
-	@Override
-	protected Path getClaMLDtdPath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", "claml.dtd");
-	}
-
-	@Override
-	protected Path getXmlResourcePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", getXmlResourceFileName());
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("Klassifikationsdateien", getPreviousCodesFileName());
 	}
 }

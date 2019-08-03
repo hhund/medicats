@@ -1,11 +1,11 @@
 package de.gecko.medicats.ops.ver_2011;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-import de.gecko.medicats.claml.ClaMLClass;
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.claml.AbstractClaMLOpsNodeFactory;
@@ -13,10 +13,14 @@ import de.gecko.medicats.ops.claml.ClaMLOpsNode;
 
 public class Ops2011NodeFactory extends AbstractClaMLOpsNodeFactory
 {
-	private static final String XML_RESOURCE_FILENAME = "ops2011syst_claml_20101021.xml";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "umsteiger_opssyst2010_opssyst2011.txt";
-	private static final String PREVIOUS_VERSION = "ops2010";
-	private static final String VERSION = "ops2011";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2011.zip", 3678408083L);
+
+	private final FileSource clamlDtd = new FileSource(zip, "p1sec2011", "Klassifikationsdateien", "claml.dtd");
+	private final FileSource clamlXml = new FileSource(zip, "p1sec2011", "Klassifikationsdateien",
+			"ops2011syst_claml_20101021.xml");
+	private FileSource transitionFile = new FileSource(zip, "p1ueb2010_2011", "Klassifikationsdateien",
+			"umsteiger_opssyst2010_opssyst2011.txt");
+	private FileSource systFile = new FileSource(zip, "p1ueb2010_2011", "Klassifikationsdateien", "opssyst2011.txt");
 
 	@Override
 	public String getName()
@@ -31,15 +35,15 @@ public class Ops2011NodeFactory extends AbstractClaMLOpsNodeFactory
 	}
 
 	@Override
-	protected String getXmlResourceFileName()
+	public String getPreviousVersion()
 	{
-		return XML_RESOURCE_FILENAME;
+		return "ops2010";
 	}
 
 	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "ops2011";
 	}
 
 	@Override
@@ -49,15 +53,27 @@ public class Ops2011NodeFactory extends AbstractClaMLOpsNodeFactory
 	}
 
 	@Override
-	public String getPreviousVersion()
+	protected FileSource getClamlXml()
 	{
-		return PREVIOUS_VERSION;
+		return clamlXml;
 	}
 
 	@Override
-	protected String getPreviousCodesFileName()
+	protected FileSource getClamlDtd()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return clamlDtd;
+	}
+
+	@Override
+	protected FileSource getTransitionFile()
+	{
+		return transitionFile;
+	}
+
+	@Override
+	protected FileSource getSystFile()
+	{
+		return systFile;
 	}
 
 	@Override
@@ -73,7 +89,7 @@ public class Ops2011NodeFactory extends AbstractClaMLOpsNodeFactory
 	}
 
 	@Override
-	protected void createSpecialNode(ClaMLOpsNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	protected void createSpecialNode(ClaMLOpsNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			List<ModifierClass> modifierClasses)
 	{
 		String superModifierCode = primaryModifier.getSuperClass().getCode();
@@ -84,48 +100,6 @@ public class Ops2011NodeFactory extends AbstractClaMLOpsNodeFactory
 			ClaMLOpsNode.createNode(parent, clamlClass, newPrimaryModifier.get(), primaryModifier);
 		else
 			ClaMLOpsNode.createNode(parent, clamlClass, primaryModifier);
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1sec2011.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 2175416122L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1ueb2010_2011.zip");
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return 4022111099L;
-	}
-
-	@Override
-	protected Path getClaMLDtdPath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", "claml.dtd");
-	}
-
-	@Override
-	protected Path getXmlResourcePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", getXmlResourceFileName());
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("Klassifikationsdateien", getPreviousCodesFileName());
 	}
 
 	@Override

@@ -1,11 +1,10 @@
 package de.gecko.medicats.alphaid.ver_2005;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.alphaid.AbstractAlphaIdNodeFactory;
 import de.gecko.medicats.alphaid.AlphaIdNode;
 import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
@@ -13,18 +12,21 @@ import de.gecko.medicats.alphaid.AlphaIdNodeRoot;
 
 public class AlphaId2005NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "dimdi-idt2005.zip", 2007174286L);
+	private final FileSource dataFile = new FileSource(zip, "dimdi-idt2005.txt");
+
 	@Override
 	public String getName()
 	{
 		return "Alpha-ID 2005";
 	}
-	
+
 	@Override
 	public String getOid()
 	{
 		return "";
 	}
-	
+
 	@Override
 	public String getVersion()
 	{
@@ -50,9 +52,9 @@ public class AlphaId2005NodeFactory extends AbstractAlphaIdNodeFactory implement
 	}
 
 	@Override
-	protected String getDataFileName()
+	protected FileSource getDataFile()
 	{
-		return "dimdi-idt2005.txt";
+		return dataFile;
 	}
 
 	@Override
@@ -81,23 +83,5 @@ public class AlphaId2005NodeFactory extends AbstractAlphaIdNodeFactory implement
 		String label = r.get(5);
 
 		return new AlphaIdNode(root, alphaId, valid, primaryIcdCode, asterixIcdCode, additionalIcdCode, null, label);
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("dimdi-idt2005.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 2007174286L;
-	}
-
-	@Override
-	protected Path getDataFileResourcePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath(getDataFileName());
 	}
 }

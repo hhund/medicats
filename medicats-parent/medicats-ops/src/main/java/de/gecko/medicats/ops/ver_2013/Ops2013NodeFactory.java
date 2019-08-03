@@ -1,11 +1,11 @@
 package de.gecko.medicats.ops.ver_2013;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-import de.gecko.medicats.claml.ClaMLClass;
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
+import de.gecko.medicats.claml.ClamlClass;
 import de.gecko.medicats.claml.ModifierClass;
 import de.gecko.medicats.ops.OpsNodeFactory;
 import de.gecko.medicats.ops.OpsNodeWalker;
@@ -14,33 +14,38 @@ import de.gecko.medicats.ops.claml.ClaMLOpsNode;
 
 public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements OpsNodeFactory
 {
-	private static final String XML_RESOURCE_FILENAME = "ops2013syst_claml_20121012.xml";
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "ops2013syst_umsteiger_2012_2013_20121109.txt";
-	private static final String PREVIOUS_VERSION = "ops2012";
-	private static final String VERSION = "ops2013";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2013.zip", 2770993612L);
+
+	private final FileSource clamlDtd = new FileSource(zip, "p1sec2013", "Klassifikationsdateien", "ClaML.dtd");
+	private final FileSource clamlXml = new FileSource(zip, "p1sec2013", "Klassifikationsdateien",
+			"ops2013syst_claml_20121012.xml");
+	private FileSource transitionFile = new FileSource(zip, "p1sua2013", "Klassifikationsdateien",
+			"ops2013syst_umsteiger_2012_2013_20121109.txt");
+	private FileSource systFile = new FileSource(zip, "p1sua2013", "Klassifikationsdateien",
+			"ops2013syst_20121113.txt");
 
 	@Override
 	public String getName()
 	{
 		return "OPS 2013";
 	}
-	
+
 	@Override
 	public String getOid()
 	{
 		return "1.2.276.0.76.5.414";
 	}
-	
+
 	@Override
-	protected String getXmlResourceFileName()
+	public String getPreviousVersion()
 	{
-		return XML_RESOURCE_FILENAME;
+		return "ops2012";
 	}
 
 	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "ops2013";
 	}
 
 	@Override
@@ -50,15 +55,27 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	}
 
 	@Override
-	public String getPreviousVersion()
+	protected FileSource getClamlXml()
 	{
-		return PREVIOUS_VERSION;
+		return clamlXml;
 	}
 
 	@Override
-	protected String getPreviousCodesFileName()
+	protected FileSource getClamlDtd()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return clamlDtd;
+	}
+
+	@Override
+	protected FileSource getTransitionFile()
+	{
+		return transitionFile;
+	}
+
+	@Override
+	protected FileSource getSystFile()
+	{
+		return systFile;
 	}
 
 	@Override
@@ -74,7 +91,7 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 	}
 
 	@Override
-	protected void createSpecialNode(ClaMLOpsNode parent, ClaMLClass clamlClass, ModifierClass primaryModifier,
+	protected void createSpecialNode(ClaMLOpsNode parent, ClamlClass clamlClass, ModifierClass primaryModifier,
 			List<ModifierClass> modifierClasses)
 	{
 		String superModifierCode = primaryModifier.getSuperClass().getCode();
@@ -85,48 +102,6 @@ public class Ops2013NodeFactory extends AbstractClaMLOpsNodeFactory implements O
 			ClaMLOpsNode.createNode(parent, clamlClass, newPrimaryModifier.get(), primaryModifier);
 		else
 			ClaMLOpsNode.createNode(parent, clamlClass, primaryModifier);
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1sec2013.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 4093448168L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return basePath.resolve("p1sua2013.zip");
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return 1652116193L;
-	}
-
-	@Override
-	protected Path getClaMLDtdPath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", "ClaML.dtd");
-	}
-
-	@Override
-	protected Path getXmlResourcePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath("Klassifikationsdateien", getXmlResourceFileName());
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("Klassifikationsdateien", getPreviousCodesFileName());
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package de.gecko.medicats.icd10.ver_gm2005;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -10,6 +8,8 @@ import org.w3c.dom.Element;
 
 import de.gecko.medicats.icd10.IcdNode.IcdNodeType;
 import de.gecko.medicats.icd10.IcdNode.IcdNodeUsage;
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.icd10.IcdNodeFactory;
 import de.gecko.medicats.icd10.IcdNodeWalker;
 import de.gecko.medicats.icd10.sgml.AbstractSgmlIcdNodeFactory;
@@ -17,13 +17,23 @@ import de.gecko.medicats.icd10.sgml.SgmlIcdNode;
 
 public class Icd10GM2005NodeFactory extends AbstractSgmlIcdNodeFactory implements IcdNodeFactory
 {
-	private static final String[] XML_CHAPTER_FILENAMES = { "KAP01.sgm", "KAP02.sgm", "KAP03.sgm", "KAP04.sgm",
-			"KAP05.sgm", "KAP06.sgm", "KAP07.sgm", "KAP08.sgm", "KAP09.sgm", "KAP10.sgm", "KAP11.sgm", "KAP12.sgm",
-			"KAP13.sgm", "KAP14.sgm", "KAP15.sgm", "KAP16.sgm", "KAP17.sgm", "KAP18.sgm", "KAP19.sgm", "KAP20.sgm",
-			"KAP21.sgm", "KAP22.sgm" };
-	private static final String UMSTEIGER_RESOURCE_FILENAME = "umsteiger.txt";
-	private static final String PREVIOUS_VERSION = "icd10gm2004";
-	private static final String VERSION = "icd10gm2005";
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "icd10gm2005.zip", 34792544L);
+
+	private FileSource[] chapterFiles = new FileSource[] { new FileSource(zip, "x1ges2005", "KAP01.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP02.sgm"), new FileSource(zip, "x1ges2005", "KAP03.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP04.sgm"), new FileSource(zip, "x1ges2005", "KAP05.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP06.sgm"), new FileSource(zip, "x1ges2005", "KAP07.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP08.sgm"), new FileSource(zip, "x1ges2005", "KAP09.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP10.sgm"), new FileSource(zip, "x1ges2005", "KAP11.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP12.sgm"), new FileSource(zip, "x1ges2005", "KAP13.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP14.sgm"), new FileSource(zip, "x1ges2005", "KAP15.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP16.sgm"), new FileSource(zip, "x1ges2005", "KAP17.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP18.sgm"), new FileSource(zip, "x1ges2005", "KAP19.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP20.sgm"), new FileSource(zip, "x1ges2005", "KAP21.sgm"),
+			new FileSource(zip, "x1ges2005", "KAP22.sgm") };
+
+	private FileSource transitionFile = new FileSource(zip, "x1ueb2004_2005", "umsteiger.txt");
+	private FileSource systFile = new FileSource(zip, "x1ueb2004_2005", "ICD10V2005.txt");
 
 	@Override
 	public String getName()
@@ -36,17 +46,17 @@ public class Icd10GM2005NodeFactory extends AbstractSgmlIcdNodeFactory implement
 	{
 		return "1.2.276.0.76.5.304";
 	}
-	
+
 	@Override
 	public String getPreviousVersion()
 	{
-		return PREVIOUS_VERSION;
+		return "icd10gm2004";
 	}
 
 	@Override
 	public String getVersion()
 	{
-		return VERSION;
+		return "icd10gm2005";
 	}
 
 	@Override
@@ -56,15 +66,27 @@ public class Icd10GM2005NodeFactory extends AbstractSgmlIcdNodeFactory implement
 	}
 
 	@Override
-	protected String getPreviousCodesFileName()
+	protected int getChapterCount()
 	{
-		return UMSTEIGER_RESOURCE_FILENAME;
+		return chapterFiles.length;
 	}
 
 	@Override
-	protected String[] getChapterFileNames()
+	protected Stream<FileSource> getChapterFiles()
 	{
-		return XML_CHAPTER_FILENAMES;
+		return Arrays.stream(chapterFiles);
+	}
+
+	@Override
+	protected FileSource getSystFile()
+	{
+		return systFile;
+	}
+
+	@Override
+	protected FileSource getTransitionFile()
+	{
+		return transitionFile;
 	}
 
 	@Override
@@ -79,41 +101,5 @@ public class Icd10GM2005NodeFactory extends AbstractSgmlIcdNodeFactory implement
 	{
 		return "I".equals(parent.getCode()) && "U80-U85".equals(code) ? true
 				: super.skipGruppe(parent, element, label, code, nodeType, nodeUsage, inclusionCodes, exclusionCodes);
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("x1ges2005.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 3224403286L;
-	}
-
-	@Override
-	protected Path getTransitionZipFileName(Path basePath)
-	{
-		return basePath.resolve("x1ueb2004_2005.zip");
-	}
-
-	@Override
-	protected long getTransitionZipChecksum()
-	{
-		return 3290291258L;
-	}
-
-	@Override
-	protected Stream<Path> getChapterFileNamePaths(FileSystem taxonomyZip)
-	{
-		return Arrays.stream(getChapterFileNames()).map(f -> taxonomyZip.getPath(f));
-	}
-
-	@Override
-	protected Path getTransitionFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath(getPreviousCodesFileName());
 	}
 }

@@ -20,14 +20,14 @@ public class ClaMLReader
 	private static final String FEATURE_NAMESPACES = "http://xml.org/sax/features/namespaces";
 	private static final String FEATURE_NAMESPACE_PREFIXES = "http://xml.org/sax/features/namespace-prefixes";
 
-	public static ClaML read(InputStream xmlResource, InputStream clamlDtd)
+	public static Claml read(InputStream xmlResource, InputStream clamlDtd)
 	{
 		Objects.requireNonNull(xmlResource, "xmlResource");
 		Objects.requireNonNull(clamlDtd, "clamlDtd");
 
 		try
 		{
-			JAXBContext context = JAXBContext.newInstance(ClaML.class);
+			JAXBContext context = JAXBContext.newInstance(Claml.class);
 
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 
@@ -45,7 +45,7 @@ public class ClaMLReader
 			InputSource input = new InputSource(xmlResource);
 			Source source = new SAXSource(xmlreader, input);
 
-			return (ClaML) unmarshaller.unmarshal(source);
+			return (Claml) unmarshaller.unmarshal(source);
 		}
 		catch (JAXBException | SAXException e)
 		{

@@ -9,9 +9,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,31 +62,12 @@ public abstract class AbstractOpsTest
 			assertTrue(factory instanceof AbstractOpsNodeFactory);
 			AbstractOpsNodeFactory f = (AbstractOpsNodeFactory) factory;
 
-			opsCodeSorted = readOpsCodes(getSystFileInputStream(getTransitionZip(f))).stream().sorted()
+			opsCodeSorted = readOpsCodes(f.getSystFile().getInputStream()).stream().sorted()
 					.collect(Collectors.toList());
 		}
 
 		return opsCodeSorted;
 	}
-
-	protected FileSystem getTransitionZip(AbstractOpsNodeFactory f)
-	{
-		return f.getTransitionZip();
-	}
-
-	protected InputStream getSystFileInputStream(FileSystem fileSystem)
-	{
-		try
-		{
-			return Files.newInputStream(getSystFilePath(fileSystem));
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected abstract Path getSystFilePath(FileSystem transitionZip);
 
 	protected abstract String getVersion();
 

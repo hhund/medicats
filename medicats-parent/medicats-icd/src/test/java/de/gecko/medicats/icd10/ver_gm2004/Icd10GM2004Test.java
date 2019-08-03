@@ -1,8 +1,6 @@
 package de.gecko.medicats.icd10.ver_gm2004;
 
 import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,12 +12,6 @@ public class Icd10GM2004Test extends AbstractIcd10GMTest
 	protected String getVersion()
 	{
 		return "icd10gm2004";
-	}
-
-	@Override
-	protected Path getSystFilePath(FileSystem transitionZip)
-	{
-		return transitionZip.getPath("icd10v2004.txt");
 	}
 
 	@Override
