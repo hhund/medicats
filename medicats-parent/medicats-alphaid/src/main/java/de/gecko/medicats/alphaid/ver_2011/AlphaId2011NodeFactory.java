@@ -2,29 +2,32 @@ package de.gecko.medicats.alphaid.ver_2011;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
 
 import org.apache.commons.csv.CSVRecord;
 
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.alphaid.AbstractAlphaIdNodeFactory;
 import de.gecko.medicats.alphaid.AlphaIdNode;
 import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
 
 public class AlphaId2011NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "alphaid2011.zip", 2146716224L);
+	private final FileSource dataFile = new FileSource(zip, "icd10gm2011_alphaid_edv_ascii20101117.txt");
+
 	@Override
 	public String getName()
 	{
 		return "Alpha-ID 2011";
 	}
-	
+
 	@Override
 	public String getOid()
 	{
 		return "1.2.276.0.76.5.387";
 	}
-	
+
 	@Override
 	public String getVersion()
 	{
@@ -50,9 +53,15 @@ public class AlphaId2011NodeFactory extends AbstractAlphaIdNodeFactory implement
 	}
 
 	@Override
-	protected String getDataFileName()
+	protected FileSource getDataFile()
 	{
-		return "icd10gm2011_alphaid_edv_ascii20101117.txt";
+		return dataFile;
+	}
+
+	@Override
+	protected Charset getDataFileEncoding()
+	{
+		return StandardCharsets.UTF_8;
 	}
 
 	@Override
@@ -66,29 +75,5 @@ public class AlphaId2011NodeFactory extends AbstractAlphaIdNodeFactory implement
 		String label = r.get(5);
 
 		return new AlphaIdNode(root, alphaId, valid, primaryIcdCode, asterixIcdCode, additionalIcdCode, null, label);
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("alphaid2011.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 2146716224L;
-	}
-
-	@Override
-	protected Path getDataFileResourcePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath(getDataFileName());
-	}
-
-	@Override
-	protected Charset getDataFileEncoding()
-	{
-		return StandardCharsets.UTF_8;
 	}
 }

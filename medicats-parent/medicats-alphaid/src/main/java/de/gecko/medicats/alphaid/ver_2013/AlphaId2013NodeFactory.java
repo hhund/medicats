@@ -1,28 +1,30 @@
 package de.gecko.medicats.alphaid.ver_2013;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-
 import org.apache.commons.csv.CSVRecord;
 
+import de.gecko.medicats.FileSource;
+import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.alphaid.AbstractAlphaIdNodeFactory;
 import de.gecko.medicats.alphaid.AlphaIdNode;
 import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
 
 public class AlphaId2013NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "alphaid2013.zip", 1881698771L);
+	private final FileSource dataFile = new FileSource(zip, "icd10gm2013_alphaid_edvascii_20120928.txt");
+
 	@Override
 	public String getName()
 	{
 		return "Alpha-ID 2013";
 	}
-	
+
 	@Override
 	public String getOid()
 	{
 		return "1.2.276.0.76.5.415";
 	}
-	
+
 	@Override
 	public String getVersion()
 	{
@@ -48,9 +50,9 @@ public class AlphaId2013NodeFactory extends AbstractAlphaIdNodeFactory implement
 	}
 
 	@Override
-	protected String getDataFileName()
+	protected FileSource getDataFile()
 	{
-		return "icd10gm2013_alphaid_edvascii_20120928.txt";
+		return dataFile;
 	}
 
 	@Override
@@ -64,23 +66,5 @@ public class AlphaId2013NodeFactory extends AbstractAlphaIdNodeFactory implement
 		String label = r.get(5);
 
 		return new AlphaIdNode(root, alphaId, valid, primaryIcdCode, asterixIcdCode, additionalIcdCode, null, label);
-	}
-
-	@Override
-	protected Path getTaxonomyZipFileName(Path basePath)
-	{
-		return basePath.resolve("alphaid2013.zip");
-	}
-
-	@Override
-	protected long getTaxonomyZipChecksum()
-	{
-		return 1881698771L;
-	}
-
-	@Override
-	protected Path getDataFileResourcePath(FileSystem taxonomyZip)
-	{
-		return taxonomyZip.getPath(getDataFileName());
 	}
 }
