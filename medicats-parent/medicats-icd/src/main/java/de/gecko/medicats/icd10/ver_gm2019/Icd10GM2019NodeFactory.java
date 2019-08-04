@@ -22,7 +22,7 @@ public class Icd10GM2019NodeFactory extends AbstractClamlIcdNodeFactory implemen
 	@Override
 	public String getName()
 	{
-		return "ICD-10-GM 2018";
+		return "ICD-10-GM 2019";
 	}
 
 	@Override
