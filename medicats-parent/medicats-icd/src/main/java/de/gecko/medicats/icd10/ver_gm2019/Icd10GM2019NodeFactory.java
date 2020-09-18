@@ -8,16 +8,16 @@ import de.gecko.medicats.icd10.claml.AbstractClamlIcdNodeFactory;
 
 public class Icd10GM2019NodeFactory extends AbstractClamlIcdNodeFactory implements IcdNodeFactory
 {
-	private final ZipSource clamlZip = new ZipSource(ZipSource.getBasePath(), "icd10gm2019syst-claml.zip", 3111705888L);
-	private final ZipSource ueberlZip = new ZipSource(ZipSource.getBasePath(), "icd10gm2019syst-ueberl.zip",
-			924198468L);
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "icd10gm2019.zip", 2930752143L);
 
-	private final FileSource clamlDtd = new FileSource(clamlZip, "Klassifikationsdateien", "ClaML.dtd");
-	private final FileSource clamlXml = new FileSource(clamlZip, "Klassifikationsdateien",
+	private final FileSource clamlDtd = new FileSource(zip, "icd10gm2019syst-claml", "Klassifikationsdateien",
+			"ClaML.dtd");
+	private final FileSource clamlXml = new FileSource(zip, "icd10gm2019syst-claml", "Klassifikationsdateien",
 			"icd10gm2019syst_claml_20180921.xml");
-	private FileSource transitionFile = new FileSource(ueberlZip, "Klassifikationsdateien",
+	private FileSource transitionFile = new FileSource(zip, "icd10gm2019syst-ueberl", "Klassifikationsdateien",
 			"icd10gm2019syst_umsteiger_2018_2019.txt");
-	private FileSource systFile = new FileSource(ueberlZip, "Klassifikationsdateien", "icd10gm2019syst.txt");
+	private FileSource systFile = new FileSource(zip, "icd10gm2019syst-ueberl", "Klassifikationsdateien",
+			"icd10gm2019syst.txt");
 
 	@Override
 	public String getName()

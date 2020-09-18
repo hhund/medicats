@@ -6,13 +6,13 @@ Medical classification and terminology systems library for Java 1.8
 The following classification and terminologies are currently supported by medicats
 
 ##### ICD 10
-SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015, GM 2016, GM 2017, GM 2018, GM 2019
+SGB-V 1.3, SGB-V 2.0, GM 2004, GM 2005, GM 2006, GM 2007, GM 2008, GM 2009, GM 2010, GM 2011, GM 2012, GM 2013, GM 2014, GM 2015, GM 2016, GM 2017, GM 2018, GM 2019, GM 2020
 
 ##### OPS
-SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
+SGB-V 2.0, SGB-V, 2.1, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020
 
 ##### Alpha-ID
-2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
+2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020
 
 #### License
 
@@ -68,12 +68,16 @@ public class Example
 A current version of the medicats webservice (module medicats-web) can be accessed at: https://medicats.gecko.hs-heilbronn.de
 
 #### Download Links DIMDI
+In case download links don't work, see https://www.dimdi.de/dynamic/de/klassifikationen/downloads/ for the latest.
 
 ##### ICD
 
+###### ICD 10 GM 2020
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/icd-10-gm/version2020/icd10gm2020syst-claml.zip
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/icd-10-gm/version2020/icd10gm2020syst-ueberl.zip
+
 ###### ICD 10 GM 2019
-- https://www.dimdi.de/dynamic/.downloads/klassifikationen/icd-10-gm/version2019/icd10gm2019syst-claml.zip
-- https://www.dimdi.de/dynamic/.downloads/klassifikationen/icd-10-gm/version2019/icd10gm2019syst-ueberl.zip
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/icd-10-gm/vorgaenger/icd10gm2019.zip
 
 ###### ICD 10 GM 2018
 - https://www.dimdi.de/dynamic/.downloads/klassifikationen/icd-10-gm/vorgaenger/icd10gm2018.zip
@@ -128,9 +132,12 @@ A current version of the medicats webservice (module medicats-web) can be access
 
 ##### OPS
 
+###### OPS 2020
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/ops/version2020/ops2020syst-claml.zip
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/ops/version2020/ops2020syst-ueberl.zip
+
 ###### OPS 2019
-- https://www.dimdi.de/dynamic/.downloads/klassifikationen/ops/version2019/ops2019syst-claml.zip
-- https://www.dimdi.de/dynamic/.downloads/klassifikationen/ops/version2019/ops2019syst-ueberl.zip
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/ops/vorgaenger/ops2019.zip
 
 ###### OPS 2018
 - https://www.dimdi.de/dynamic/.downloads/klassifikationen/ops/vorgaenger/ops2018.zip
@@ -185,11 +192,14 @@ A current version of the medicats webservice (module medicats-web) can be access
 
 ##### Alpha-ID
 
+###### 2020
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/alpha-id/version2020/alphaid2020.zip
+
 ###### 2019
 - https://www.dimdi.de/dynamic/.downloads/klassifikationen/alpha-id/version2019/alphaid2019.zip
 
 ###### 2018
-- https://www.dimdi.de/dynamic/.downloads/klassifikationen/alpha-id/version2018/alphaid2018.zip
+- https://www.dimdi.de/dynamic/.downloads/klassifikationen/alpha-id/vorgaenger/alphaid2018.zip
 
 ###### 2017
 - https://www.dimdi.de/dynamic/.downloads/klassifikationen/alpha-id/vorgaenger/alphaid2017.zip

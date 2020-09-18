@@ -14,15 +14,15 @@ import de.gecko.medicats.ops.claml.ClaMLOpsNode;
 
 public class Ops2019NodeFactory extends AbstractClaMLOpsNodeFactory implements OpsNodeFactory
 {
-	private final ZipSource clamlZip = new ZipSource(ZipSource.getBasePath(), "ops2019syst-claml.zip", 2346119594L);
-	private final ZipSource ueberlZip = new ZipSource(ZipSource.getBasePath(), "ops2019syst-ueberl.zip", 2716302191L);
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2019.zip", 1413813306L);
 
-	private final FileSource clamlDtd = new FileSource(clamlZip, "Klassifikationsdateien", "ClaML.dtd");
-	private final FileSource clamlXml = new FileSource(clamlZip, "Klassifikationsdateien",
+	private final FileSource clamlDtd = new FileSource(zip, "ops2019syst-claml", "Klassifikationsdateien", "ClaML.dtd");
+	private final FileSource clamlXml = new FileSource(zip, "ops2019syst-claml", "Klassifikationsdateien",
 			"ops2019syst_claml_20181019.xml");
-	private FileSource transitionFile = new FileSource(ueberlZip, "Klassifikationsdateien",
+	private FileSource transitionFile = new FileSource(zip, "ops2019syst-ueberl", "Klassifikationsdateien",
 			"ops2019syst_umsteiger_2018_2019.txt");
-	private FileSource systFile = new FileSource(ueberlZip, "Klassifikationsdateien", "ops2019syst.txt");
+	private FileSource systFile = new FileSource(zip, "ops2019syst-ueberl", "Klassifikationsdateien",
+			"ops2019syst.txt");
 
 	@Override
 	public String getName()
