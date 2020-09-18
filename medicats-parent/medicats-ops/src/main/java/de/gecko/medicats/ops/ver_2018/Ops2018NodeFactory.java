@@ -1,5 +1,6 @@
 package de.gecko.medicats.ops.ver_2018;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ import de.gecko.medicats.ops.claml.ClaMLOpsNode;
 
 public class Ops2018NodeFactory extends AbstractClaMLOpsNodeFactory implements OpsNodeFactory
 {
-	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2018.zip", 3112603067L);
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "ops2018.zip", 3112603067L, StandardCharsets.ISO_8859_1);
 
 	private final FileSource clamlDtd = new FileSource(zip, "p1sec2018", "Klassifikationsdateien", "ClaML.dtd");
 	private final FileSource clamlXml = new FileSource(zip, "p1sec2018", "Klassifikationsdateien",

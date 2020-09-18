@@ -1,10 +1,13 @@
 package de.gecko.medicats;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.Collections;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
@@ -20,12 +23,25 @@ public class ZipSource implements AutoCloseable
 
 	private final Path file;
 	private final long checksum;
+	private final Charset filenameEncoding;
 
 	private FileSystem fileSystem;
 
+	public ZipSource(Path basePath, String filename, long checksum, Charset filenameEncoding)
+	{
+		this(basePath.resolve(filename), checksum, filenameEncoding);
+	}
+
 	public ZipSource(Path basePath, String filename, long checksum)
 	{
-		this(basePath.resolve(filename), checksum);
+		this(basePath, filename, checksum, null);
+	}
+
+	public ZipSource(Path file, long checksum, Charset filenameEncoding)
+	{
+		this.file = file;
+		this.checksum = checksum;
+		this.filenameEncoding = filenameEncoding;
 
 		try
 		{
@@ -35,12 +51,6 @@ public class ZipSource implements AutoCloseable
 		{
 			throw new RuntimeException(e);
 		}
-	}
-
-	public ZipSource(Path file, long checksum)
-	{
-		this.file = file;
-		this.checksum = checksum;
 	}
 
 	public Path getFile()
@@ -58,7 +68,21 @@ public class ZipSource implements AutoCloseable
 		try
 		{
 			if (fileSystem == null || !fileSystem.isOpen())
-				fileSystem = FileSystems.newFileSystem(file, null);
+			{
+				for (FileSystemProvider provider : FileSystemProvider.installedProviders())
+				{
+					try
+					{
+						if (filenameEncoding != null)
+							return provider.newFileSystem(file, Map.of("encoding", filenameEncoding.name()));
+						else
+							return provider.newFileSystem(file, Collections.emptyMap());
+					}
+					catch (UnsupportedOperationException uoe)
+					{
+					}
+				}
+			}
 
 			return fileSystem;
 		}
@@ -73,8 +97,8 @@ public class ZipSource implements AutoCloseable
 		long calculatedChecksum = FileUtils.checksumCRC32(file.toFile());
 
 		if (calculatedChecksum != getChecksum())
-			throw new IOException("CRC32 checksum error, checksum for file " + file.toString() + " unexpected: "
-					+ calculatedChecksum);
+			throw new IOException("CRC32 checksum error for file " + file.toString() + ": " + getChecksum()
+					+ " (expected) vs. " + calculatedChecksum + " (calculated)");
 	}
 
 	@Override

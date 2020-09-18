@@ -10,7 +10,8 @@ import de.gecko.medicats.alphaid.AlphaIdNodeFactory;
 
 public class AlphaId2018NodeFactory extends AbstractAlphaIdNodeFactory implements AlphaIdNodeFactory
 {
-	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "alphaid2018.zip", 1407048992L);
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "alphaid2018.zip", 1407048992L,
+			StandardCharsets.ISO_8859_1);
 	private final FileSource dataFile = new FileSource(zip, "icd10gm2018_alphaidse_edvtxt_20171004.txt");
 
 	@Override

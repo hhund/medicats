@@ -1,5 +1,7 @@
 package de.gecko.medicats.icd10.ver_gm2018;
 
+import java.nio.charset.StandardCharsets;
+
 import de.gecko.medicats.FileSource;
 import de.gecko.medicats.ZipSource;
 import de.gecko.medicats.icd10.IcdNodeFactory;
@@ -8,7 +10,8 @@ import de.gecko.medicats.icd10.claml.AbstractClamlIcdNodeFactory;
 
 public class Icd10GM2018NodeFactory extends AbstractClamlIcdNodeFactory implements IcdNodeFactory
 {
-	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "icd10gm2018.zip", 3865060349L);
+	private final ZipSource zip = new ZipSource(ZipSource.getBasePath(), "icd10gm2018.zip", 3865060349L,
+			StandardCharsets.ISO_8859_1);
 
 	private final FileSource clamlDtd = new FileSource(zip, "x1gec2018", "Klassifikationsdateien", "ClaML.dtd");
 	private final FileSource clamlXml = new FileSource(zip, "x1gec2018", "Klassifikationsdateien",
