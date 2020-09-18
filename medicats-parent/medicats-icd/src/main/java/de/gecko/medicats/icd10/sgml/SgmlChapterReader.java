@@ -114,7 +114,7 @@ public class SgmlChapterReader
 	{
 		try
 		{
-			String data = IOUtils.toString(sgmlChapterStream);
+			String data = IOUtils.toString(sgmlChapterStream, StandardCharsets.UTF_8);
 			for (Entry<String, String> e : cleanupMap.entrySet())
 				data = data.replaceAll(e.getKey(), e.getValue());
 

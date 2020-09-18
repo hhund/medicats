@@ -7,13 +7,14 @@ import java.util.Objects;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class ClaMLReader
 {
@@ -31,7 +32,7 @@ public class ClaMLReader
 
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 
-			XMLReader xmlreader = XMLReaderFactory.createXMLReader();
+			XMLReader xmlreader = SAXParserFactory.newInstance().newSAXParser().getXMLReader(); 
 			xmlreader.setFeature(FEATURE_NAMESPACES, true);
 			xmlreader.setFeature(FEATURE_NAMESPACE_PREFIXES, true);
 			xmlreader.setEntityResolver((publicId, systemId) ->
@@ -47,7 +48,7 @@ public class ClaMLReader
 
 			return (Claml) unmarshaller.unmarshal(source);
 		}
-		catch (JAXBException | SAXException e)
+		catch (JAXBException | SAXException | ParserConfigurationException e)
 		{
 			throw new RuntimeException(e);
 		}

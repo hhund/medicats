@@ -131,7 +131,8 @@ public class OpsSgmlReader
 	{
 		try
 		{
-			String data = IOUtils.toString(OpsSgmlReader.class.getResourceAsStream("/" + sgmlChapterFileName));
+			String data = IOUtils.toString(OpsSgmlReader.class.getResourceAsStream("/" + sgmlChapterFileName),
+					StandardCharsets.UTF_8);
 			for (Entry<String, String> e : cleanupMap.entrySet())
 				data = data.replaceAll(e.getKey(), e.getValue());
 
@@ -154,7 +155,7 @@ public class OpsSgmlReader
 	{
 		try
 		{
-			String data = IOUtils.toString(sgmlStream);
+			String data = IOUtils.toString(sgmlStream, StandardCharsets.UTF_8);
 			for (Entry<String, String> e : cleanupMap.entrySet())
 				data = data.replaceAll(e.getKey(), e.getValue());
 
