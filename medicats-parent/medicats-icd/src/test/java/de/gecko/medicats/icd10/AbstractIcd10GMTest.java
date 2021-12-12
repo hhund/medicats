@@ -32,7 +32,7 @@ public abstract class AbstractIcd10GMTest
 		List<String> codes = new ArrayList<>();
 
 		try (Reader reader = new InputStreamReader(systFileInputstream, StandardCharsets.UTF_8);
-				CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withDelimiter(';')))
+				CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.builder().setDelimiter(';').build()))
 		{
 			for (final CSVRecord record : parser)
 			{

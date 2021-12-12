@@ -1,6 +1,7 @@
 package de.gecko.medicats.web.rest;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,7 +43,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.MMapDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,7 @@ public class SearchWebservice
 		this.transformer = transformer;
 
 		analyzer = new StandardAnalyzer();
-		Directory index = new RAMDirectory();
+		Directory index = new MMapDirectory(Files.createTempDirectory("medicats"));
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		IndexWriter writer = new IndexWriter(index, config);
 
@@ -171,7 +172,8 @@ public class SearchWebservice
 		try
 		{
 			SearchResultNodeListDto dto = qParam == null || qParam.isEmpty()
-					? new SearchResultNodeListDto(Collections.emptyList()) : searchImpl(qParam);
+					? new SearchResultNodeListDto(Collections.emptyList())
+					: searchImpl(qParam);
 
 			return Response.ok(transformer.transform(dto, "SearchResultNodeListDto.xslt")).build();
 		}

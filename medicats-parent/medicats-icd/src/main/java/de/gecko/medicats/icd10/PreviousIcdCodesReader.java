@@ -35,7 +35,7 @@ public final class PreviousIcdCodesReader
 		List<PreviousCodeMapping> mappings = new ArrayList<>();
 
 		try (Reader reader = new InputStreamReader(transitionFileStream, charset);
-				CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withDelimiter(';')))
+				CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.builder().setDelimiter(';').build()))
 		{
 			for (final CSVRecord record : parser)
 			{

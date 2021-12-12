@@ -76,7 +76,7 @@ public abstract class AbstractOpsTest
 		List<OpsEntry> codes = new ArrayList<>();
 
 		try (Reader reader = new InputStreamReader(systFileInputstream, getCharset());
-				CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withDelimiter(';')))
+				CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.builder().setDelimiter(';').build()))
 		{
 			for (final CSVRecord record : parser)
 			{
