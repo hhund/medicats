@@ -17,7 +17,7 @@ public class SgmlIcdNodeRoot extends SgmlIcdNode
 
 	public SgmlIcdNodeRoot(String version, int sortIndex, PreviousCodeMappings mappings, String previousVersion)
 	{
-		super(null, null, "ROOT", "ROOT", IcdNodeType.ROOT, IcdNodeUsage.UNDEFINED, null, null);
+		super(null, null, "ROOT", "ROOT", IcdNodeType.ROOT, IcdNodeUsage.UNDEFINED, null, null, null, null);
 
 		this.version = version;
 		this.sortIndex = sortIndex;

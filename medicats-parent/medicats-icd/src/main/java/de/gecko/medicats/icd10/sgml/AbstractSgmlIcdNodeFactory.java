@@ -1,9 +1,7 @@
 package de.gecko.medicats.icd10.sgml;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,11 +23,6 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 
 	protected abstract Stream<FileSource> getChapterFiles();
 
-	/**
-	 * @param chapter
-	 *            [1 .. {@link #chapterCount()}]
-	 * @return
-	 */
 	protected synchronized Element getChapter(int chapter)
 	{
 		if (chapter < 1 || chapter > getChapterCount())
@@ -70,6 +63,56 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 		}
 	}
 
+	private void putInExclusionText(HashMap<String, String> map, Element element) {
+		try {
+			Element textNode = getElementByTagNameOrNull(element, "TXT");
+			Element linkNode = getElementByTagNameOrNull(element, "L");
+			if (textNode == null) return;
+			String text = getTextContentCleaned(textNode);
+			String code = null;
+			if (linkNode != null) code = getTextContentCleaned(linkNode);
+			map.put(text, code);
+		} catch (IOException e) {
+			System.err.printf("Exception on node %s: %s%n", element.getNodeName(), e);
+		}
+	}
+
+	private List<List<Element>> getAtoms(List<Element> eintrags) {
+		return eintrags.stream().map(e -> {
+			try {
+				return getElementsByTagName(e, "ATOM");
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
+		}).collect(Collectors.toList());
+	}
+
+	private Map<String, String> getExclusionsForNode(Element node) throws IOException {
+		if (node == null) return Collections.emptyMap();
+		Element exclusiva = getElementByTagNameOrNull(node, "E");
+		if (exclusiva == null) return Collections.emptyMap();
+		List<Element> eintrag = getElementsByTagName(exclusiva, "EINTRAG");
+		List<List<Element>> atoms = getAtoms(eintrag);
+		HashMap<String, String> exclusivaMap = new HashMap<>();
+		atoms.forEach(e -> e.forEach(a -> putInExclusionText(exclusivaMap, a)));
+		return exclusivaMap;
+	}
+
+	private Map<String, String> getInclusionsForNode(Element node) throws IOException {
+		if (node == null) return Collections.emptyMap();
+		Element inclusiva1 = getElementByTagNameOrNull(node, "I1");
+		Element inclusiva2 = getElementByTagNameOrNull(node, "I2");
+		List<Element> eintrags = new LinkedList<>();
+		if (inclusiva1 != null) eintrags.addAll(getElementsByTagName(inclusiva1, "EINTRAG"));
+		if (inclusiva2 != null) eintrags.add(getElementByTagName(inclusiva2, "EINTRAG"));
+		if (eintrags.isEmpty()) return Collections.emptyMap();
+
+		List<List<Element>> atoms = getAtoms(eintrags);
+		HashMap<String, String> inclusivaMap = new HashMap<>();
+		atoms.forEach(e -> e.forEach(atom -> putInExclusionText(inclusivaMap, atom)));
+		return inclusivaMap;
+	}
+
 	private void parseKap(SgmlIcdNode parent, Element chapter) throws IOException
 	{
 		Element knr = getElementByTagName(chapter, "KNR");
@@ -78,21 +121,9 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 		String code = getTextContentCleaned(knr);
 		String label = getTextContentCleaned(kti);
 
-		List<String> exclusions = new ArrayList<>();
-		List<String> inclusions = new ArrayList<>();
-
 		Element kInhalt = getElementByTagNameOrNull(chapter, "KINHALT");
-		if (kInhalt != null)
-		{
-			Element exlusiva = getElementByTagNameOrNull(kInhalt, "E");
-			if (exlusiva != null)
-				exclusions.addAll(parseExclusiva(exlusiva));
-
-			Element inclusiva1 = getElementByTagNameOrNull(kInhalt, "I1");
-			Element inclusiva2 = getElementByTagNameOrNull(kInhalt, "I2");
-			if (inclusiva1 != null || inclusiva2 != null)
-				inclusions.addAll(parseInclusiva(inclusiva1, inclusiva2));
-		}
+		Map<String, String> inclusions = getInclusionsForNode(kInhalt);
+		Map<String, String> exclusions = getExclusionsForNode(kInhalt);
 
 		SgmlIcdNode node = SgmlIcdNode.createNode(parent, chapter, label, code, IcdNodeType.CHAPTER,
 				IcdNodeUsage.UNDEFINED, inclusions, exclusions);
@@ -109,21 +140,9 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 		String code = parseVonBis(grahm);
 		String label = getTextContentCleaned(grti);
 
-		List<String> exclusions = new ArrayList<>();
-		List<String> inclusions = new ArrayList<>();
-
 		Element inhalt = getElementByTagNameOrNull(gruppe, "INHALT");
-		if (inhalt != null)
-		{
-			Element exlusiva = getElementByTagNameOrNull(inhalt, "E");
-			if (exlusiva != null)
-				exclusions.addAll(parseExclusiva(exlusiva));
-
-			Element inclusiva1 = getElementByTagNameOrNull(inhalt, "I1");
-			Element inclusiva2 = getElementByTagNameOrNull(inhalt, "I2");
-			if (inclusiva1 != null || inclusiva2 != null)
-				inclusions.addAll(parseInclusiva(inclusiva1, inclusiva2));
-		}
+		Map<String, String> inclusions = getInclusionsForNode(inhalt);
+		Map<String, String> exclusions = getExclusionsForNode(inhalt);
 
 		if (skipGruppe(parent, gruppe, label, code, IcdNodeType.BLOCK, IcdNodeUsage.UNDEFINED, inclusions, exclusions))
 			return;
@@ -144,8 +163,14 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 		}
 	}
 
+	@SuppressWarnings({"unused", "SameParameterValue"})
+	protected boolean skipGruppe(SgmlIcdNode parent, Element gruppe, String label, String code, IcdNodeType block, IcdNodeUsage nodeUsage, Map<String, String> inclusions, Map<String, String> exclusions) {
+		return false;
+	}
+
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	protected boolean skipGruppe(SgmlIcdNode parent, Element element, String label, String code, IcdNodeType nodeType,
-			IcdNodeUsage nodeUsage, List<String> inclusionCodes, List<String> exclusionCodes)
+								 IcdNodeUsage nodeUsage, List<String> inclusionCodes, List<String> exclusionCodes)
 	{
 		return false;
 	}
@@ -158,21 +183,9 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 		String code = parseVonBis(ugrrahm);
 		String label = getTextContentCleaned(ugrti);
 
-		List<String> exclusions = new ArrayList<>();
-		List<String> inclusions = new ArrayList<>();
-
 		Element inhalt = getElementByTagNameOrNull(uGruppe, "INHALT");
-		if (inhalt != null)
-		{
-			Element exlusiva = getElementByTagNameOrNull(inhalt, "E");
-			if (exlusiva != null)
-				exclusions.addAll(parseExclusiva(exlusiva));
-
-			Element inclusiva1 = getElementByTagNameOrNull(inhalt, "I1");
-			Element inclusiva2 = getElementByTagNameOrNull(inhalt, "I2");
-			if (inclusiva1 != null || inclusiva2 != null)
-				inclusions.addAll(parseInclusiva(inclusiva1, inclusiva2));
-		}
+		Map<String, String> inclusions = getInclusionsForNode(inhalt);
+		Map<String, String> exclusions = getExclusionsForNode(inhalt);
 
 		SgmlIcdNode node = SgmlIcdNode.createNode(parent, uGruppe, label, code, IcdNodeType.BLOCK,
 				IcdNodeUsage.UNDEFINED, inclusions, exclusions);
@@ -191,27 +204,15 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 			Element dti = getElementByTagName(dbasis, "DTI");
 
 			String code = getTextContentCleaned(dcode);
-			if (code == null || code.isEmpty())
+			if (code.isEmpty())
 				code = codeAttribute;
 
 			String typ = dcode.getAttribute("TYP");
 			String label = getTextContentCleaned(dti);
 
-			List<String> exclusions = new ArrayList<>();
-			List<String> inclusions = new ArrayList<>();
-
 			Element inhalt = getElementByTagNameOrNull(d, "INHALT");
-			if (inhalt != null)
-			{
-				Element exlusiva = getElementByTagNameOrNull(inhalt, "E");
-				if (exlusiva != null)
-					exclusions.addAll(parseExclusiva(exlusiva));
-
-				Element inclusiva1 = getElementByTagNameOrNull(inhalt, "I1");
-				Element inclusiva2 = getElementByTagNameOrNull(inhalt, "I2");
-				if (inclusiva1 != null || inclusiva2 != null)
-					inclusions.addAll(parseInclusiva(inclusiva1, inclusiva2));
-			}
+			Map<String, String> inclusions = getInclusionsForNode(inhalt);
+			Map<String, String> exclusions = getExclusionsForNode(inhalt);
 
 			SgmlIcdNode node = SgmlIcdNode.createNode(parent, d, label, cleanCode(code), IcdNodeType.CATEGORY,
 					nodeUsageFromCode(typ), inclusions, exclusions);
@@ -266,21 +267,9 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 		String typ = vcode.getAttribute("TYP");
 		String label = getTextContentCleaned(vti);
 
-		List<String> exclusions = new ArrayList<>();
-		List<String> inclusions = new ArrayList<>();
-
 		Element inhalt = getElementByTagNameOrNull(v, "INHALT");
-		if (inhalt != null)
-		{
-			Element exlusiva = getElementByTagNameOrNull(inhalt, "E");
-			if (exlusiva != null)
-				exclusions.addAll(parseExclusiva(exlusiva));
-
-			Element inclusiva1 = getElementByTagNameOrNull(inhalt, "I1");
-			Element inclusiva2 = getElementByTagNameOrNull(inhalt, "I2");
-			if (inclusiva1 != null || inclusiva2 != null)
-				inclusions.addAll(parseInclusiva(inclusiva1, inclusiva2));
-		}
+		Map<String, String> inclusions = getInclusionsForNode(inhalt);
+		Map<String, String> exclusions = getExclusionsForNode(inhalt);
 
 		SgmlIcdNode node = SgmlIcdNode.createNode(parent, v, label, cleanCode(code), IcdNodeType.CATEGORY,
 				nodeUsageFromCode(typ), inclusions, exclusions);
@@ -299,21 +288,9 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 		String typ = fcode.getAttribute("TYP");
 		String label = getTextContentCleaned(fti);
 
-		List<String> exclusions = new ArrayList<>();
-		List<String> inclusions = new ArrayList<>();
-
 		Element inhalt = getElementByTagNameOrNull(f, "INHALT");
-		if (inhalt != null)
-		{
-			Element exlusiva = getElementByTagNameOrNull(inhalt, "E");
-			if (exlusiva != null)
-				exclusions.addAll(parseExclusiva(exlusiva));
-
-			Element inclusiva1 = getElementByTagNameOrNull(inhalt, "I1");
-			Element inclusiva2 = getElementByTagNameOrNull(inhalt, "I2");
-			if (inclusiva1 != null || inclusiva2 != null)
-				inclusions.addAll(parseInclusiva(inclusiva1, inclusiva2));
-		}
+		Map<String, String> inclusions = getInclusionsForNode(inhalt);
+		Map<String, String> exclusions = getExclusionsForNode(inhalt);
 
 		SgmlIcdNode.createNode(parent, f, label, cleanCode(code), IcdNodeType.CATEGORY, nodeUsageFromCode(typ),
 				inclusions, exclusions);
@@ -329,30 +306,6 @@ public abstract class AbstractSgmlIcdNodeFactory extends AbstractIcdNodeFactory
 			code += ("-" + getTextContentCleaned(bis));
 
 		return code;
-	}
-
-	private List<String> parseExclusiva(Element exlusiva) throws IOException
-	{
-		List<Element> ls = getElementsByTagName(exlusiva, "L");
-		if (ls.isEmpty())
-			return Collections.emptyList();
-
-		return ls.stream().map(l -> getTextContentCleaned(l)).collect(Collectors.toList());
-	}
-
-	private List<String> parseInclusiva(Element inclusiva1, Element inclusiva2) throws IOException
-	{
-		List<Element> ls = new ArrayList<>();
-
-		if (inclusiva1 != null)
-			ls.addAll(getElementsByTagName(inclusiva1, "L"));
-		if (inclusiva2 != null)
-			ls.addAll(getElementsByTagName(inclusiva2, "L"));
-
-		if (ls.isEmpty())
-			return Collections.emptyList();
-
-		return ls.stream().map(l -> getTextContentCleaned(l)).collect(Collectors.toList());
 	}
 
 	private List<Element> getElementsByTagName(Element e, String tagname) throws IOException

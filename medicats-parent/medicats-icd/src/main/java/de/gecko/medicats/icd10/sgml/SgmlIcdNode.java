@@ -1,9 +1,8 @@
 package de.gecko.medicats.icd10.sgml;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.w3c.dom.Element;
@@ -13,14 +12,16 @@ import de.gecko.medicats.icd10.IcdNode;
 public class SgmlIcdNode extends IcdNode
 {
 	public static SgmlIcdNode createNode(SgmlIcdNode parent, Element element, String label, String code,
-			IcdNodeType nodeType, IcdNodeUsage nodeUsage, List<String> inclusionCodes, List<String> exclusionCodes)
+										 IcdNodeType nodeType, IcdNodeUsage nodeUsage, List<String> inclusionCodes,
+										 List<String> exclusionCodes, List<String> inclusionStrings,
+										 List<String> exclusionStrings)
 	{
 		SgmlIcdNode node = new SgmlIcdNode(Objects.requireNonNull(parent, "parent"),
 				Objects.requireNonNull(element, "element"), Objects.requireNonNull(label, "label"),
 				Objects.requireNonNull(code, "code"), Objects.requireNonNull(nodeType, "nodeType"),
 				Objects.requireNonNull(nodeUsage, "nodeUsage"),
 				Objects.requireNonNull(inclusionCodes, "inclusionCodes"),
-				Objects.requireNonNull(exclusionCodes, "exclusionCodes"));
+				Objects.requireNonNull(exclusionCodes, "exclusionCodes"), inclusionStrings, exclusionStrings);
 
 		if (code.isEmpty())
 			throw new IllegalArgumentException("code is empty");
@@ -34,11 +35,15 @@ public class SgmlIcdNode extends IcdNode
 	private final String code;
 	private final IcdNodeType nodeType;
 	private final IcdNodeUsage nodeUsage;
+
 	private final List<String> inclusionCodes;
 	private final List<String> exclusionCodes;
 
+	private final List<String> inclusionStrings;
+	private final List<String> exclusionStrings;
+
 	protected SgmlIcdNode(IcdNode parent, Element element, String label, String code, IcdNodeType nodeType,
-			IcdNodeUsage nodeUsage, List<String> inclusionCodes, List<String> exclusionCodes)
+						  IcdNodeUsage nodeUsage, List<String> inclusionCodes, List<String> exclusionCodes, List<String> inclusionStrings, List<String> exclusionStrings)
 	{
 		super(parent);
 
@@ -49,6 +54,23 @@ public class SgmlIcdNode extends IcdNode
 		this.nodeUsage = nodeUsage;
 		this.inclusionCodes = inclusionCodes;
 		this.exclusionCodes = exclusionCodes;
+		this.inclusionStrings = inclusionStrings;
+		this.exclusionStrings = exclusionStrings;
+	}
+
+	public static SgmlIcdNode createNode(SgmlIcdNode parent,
+										 Element chapter,
+										 String label,
+										 String code,
+										 IcdNodeType nodeType,
+										 IcdNodeUsage icdNodeUsage,
+										 Map<String, String> inclusions,
+										 Map<String, String> exclusions) {
+		List<String> inclusionCodes = new ArrayList<>(inclusions.values());
+		List<String> exclusionCodes = new ArrayList<>(exclusions.values());
+		List<String> inclusionTexts = new ArrayList<>(inclusions.keySet());
+		List<String> exclusionTexts = new ArrayList<>(exclusions.keySet());
+		return createNode(parent, chapter, label, code, nodeType, icdNodeUsage, inclusionCodes, exclusionCodes, inclusionTexts, exclusionTexts);
 	}
 
 	public Element getSgmlElement()
@@ -80,6 +102,22 @@ public class SgmlIcdNode extends IcdNode
 		return nodeUsage;
 	}
 
+	public List<String> getInclusionCodes() {
+		return inclusionCodes;
+	}
+
+	public List<String> getInclusionStrings() {
+		return inclusionStrings;
+	}
+
+	public List<String> getExclusionCodes() {
+		return exclusionCodes;
+	}
+
+	public List<String> getExclusionStrings() {
+		return exclusionStrings;
+	}
+
 	private static class IcdNodesWithExtraUsage
 	{
 		final List<IcdNode> nodes = new ArrayList<>();
@@ -99,7 +137,7 @@ public class SgmlIcdNode extends IcdNode
 			return Stream.empty();
 
 		return inclusionCodes.stream().map(c -> new IcdNodesWithExtraUsage(byCode.apply(removeUsage(c)), fromCode(c)))
-				.map(e -> wrappIfUsageDifferent(e.nodes, e.usage)).flatMap(l -> l.stream()).distinct();
+				.map(e -> wrappIfUsageDifferent(e.nodes, e.usage)).flatMap(Collection::stream).distinct();
 	}
 
 	@Override
@@ -109,7 +147,7 @@ public class SgmlIcdNode extends IcdNode
 			return Stream.empty();
 
 		return exclusionCodes.stream().map(c -> new IcdNodesWithExtraUsage(byCode.apply(removeUsage(c)), fromCode(c)))
-				.map(e -> wrappIfUsageDifferent(e.nodes, e.usage)).flatMap(l -> l.stream()).distinct();
+				.map(e -> wrappIfUsageDifferent(e.nodes, e.usage)).flatMap(Collection::stream).distinct();
 	}
 
 	private String removeUsage(String code)
