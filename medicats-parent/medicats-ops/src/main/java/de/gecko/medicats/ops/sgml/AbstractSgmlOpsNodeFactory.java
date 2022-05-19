@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
@@ -47,6 +48,13 @@ public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 		return root;
 	}
 
+	private Map<String, String> getExclusionsForNode(Element node) throws IOException {
+		if (node == null) return Collections.emptyMap();
+		Element exclusiva = getElementByTagNameOrNull(node, "VEXKL");
+		if (exclusiva == null) return Collections.emptyMap();
+		List<Element> texts = getElementsByTagName(exclusiva, "VTXT");
+	}
+
 	private void parseKap(SgmlOpsNodeRoot root, Element kap) throws IOException
 	{
 		Element knr = getElementByTagName(kap, "KNR");
@@ -55,8 +63,8 @@ public abstract class AbstractSgmlOpsNodeFactory extends AbstractOpsNodeFactory
 		String code = getTextContentCleaned(knr);
 		String label = getTextContentCleaned(kti);
 
-		SgmlOpsNode node = SgmlOpsNode.createNode(root, kap, label, code, OpsNodeType.CHAPTER, Collections.emptyList(),
-				Collections.emptyList());
+		SgmlOpsNode node = SgmlOpsNode.createNode(root, kap, label, code, OpsNodeType.CHAPTER, Collections.emptyMap(),
+				Collections.emptyMap());
 
 		NodeList childs = kap.getChildNodes();
 		for (int c = 0; c < childs.getLength(); c++)

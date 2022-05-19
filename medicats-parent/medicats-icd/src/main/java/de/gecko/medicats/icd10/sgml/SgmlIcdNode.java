@@ -68,9 +68,9 @@ public class SgmlIcdNode extends IcdNode
 										 Map<String, String> exclusions) {
 		List<String> inclusionCodes = new ArrayList<>(inclusions.values());
 		List<String> exclusionCodes = new ArrayList<>(exclusions.values());
-		List<String> inclusionTexts = new ArrayList<>(inclusions.keySet());
-		List<String> exclusionTexts = new ArrayList<>(exclusions.keySet());
-		return createNode(parent, chapter, label, code, nodeType, icdNodeUsage, inclusionCodes, exclusionCodes, inclusionTexts, exclusionTexts);
+		List<String> inclusionStrings = new ArrayList<>(inclusions.keySet());
+		List<String> exclusionStrings = new ArrayList<>(exclusions.keySet());
+		return createNode(parent, chapter, label, code, nodeType, icdNodeUsage, inclusionCodes, exclusionCodes, inclusionStrings, exclusionStrings);
 	}
 
 	public Element getSgmlElement()
