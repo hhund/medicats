@@ -17,11 +17,15 @@ public class SgmlIcdNode extends IcdNode
 										 List<String> exclusionStrings)
 	{
 		SgmlIcdNode node = new SgmlIcdNode(Objects.requireNonNull(parent, "parent"),
-				Objects.requireNonNull(element, "element"), Objects.requireNonNull(label, "label"),
-				Objects.requireNonNull(code, "code"), Objects.requireNonNull(nodeType, "nodeType"),
+				Objects.requireNonNull(element, "element"),
+				Objects.requireNonNull(label, "label"),
+				Objects.requireNonNull(code, "code"),
+				Objects.requireNonNull(nodeType, "nodeType"),
 				Objects.requireNonNull(nodeUsage, "nodeUsage"),
 				Objects.requireNonNull(inclusionCodes, "inclusionCodes"),
-				Objects.requireNonNull(exclusionCodes, "exclusionCodes"), inclusionStrings, exclusionStrings);
+				Objects.requireNonNull(exclusionCodes, "exclusionCodes"),
+				Objects.requireNonNull(inclusionStrings, "inclusionStrings"),
+				Objects.requireNonNull(exclusionStrings, "exclusionStrings"));
 
 		if (code.isEmpty())
 			throw new IllegalArgumentException("code is empty");

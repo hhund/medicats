@@ -9,6 +9,7 @@ import de.gecko.medicats.ops.OpsNode;
 import de.gecko.medicats.ops.OpsNodeFactory;
 import de.gecko.medicats.ops.OpsNodeWalker;
 import de.gecko.medicats.ops.OpsService;
+import de.gecko.medicats.ops.sgml.SgmlOpsNode;
 
 import java.util.List;
 import java.util.Scanner;
@@ -25,41 +26,41 @@ public class MedicatsTest
 
     private static void testOps() {
         System.out.println("OPS Test");
-        System.setProperty("dimdi.files.path", "/Users/yoshi/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes/IMI/Terminology-Resources/OPS");
+        System.setProperty("dimdi.files.path", "Y:\\Terminology-Resources\\OPS");
         OpsService opsService = OpsService.getService();
         OpsNodeFactory nodeFactory = opsService.getNodeFactory("ops2004");
         System.out.printf("\tLoaded version: %s%n", nodeFactory.getName());
         OpsNodeWalker nodeWalker = nodeFactory.createNodeWalker();
         String code = "1-209";
-        OpsNode targetNode = nodeWalker.getNodeByCode(code);
+        SgmlOpsNode targetNode = (SgmlOpsNode) nodeWalker.getNodeByCode(code);
         if (targetNode == null) System.exit(1);
         System.out.printf("\tCode='%s', Display='%s'%n", targetNode.getCode(), targetNode.getLabel());
         System.out.printf("\tInclusions:%n");
-        System.out.printf("\t\tcodes=[%s]%n", targetNode.getInclusions(nodeWalker::getNodesBySudoCode).map(OpsNode::getCode).collect(Collectors.joining(", ")));
+        System.out.printf("\t\tcodes=[%s]%n", targetNode.getInclusions(nodeWalker::getNodesBySudoCode).map(OpsNode::getCode).collect(Collectors.joining("; ")));
+        System.out.printf("\t\tstrings=[%s]%n", String.join(", ", targetNode.getInclusionStrings()));
         System.out.printf("\tExclusions:%n");
-        System.out.printf("\t\tcodes=[%s]%n", targetNode.getExclusions(nodeWalker::getNodesBySudoCode).map(OpsNode::getCode).collect(Collectors.joining(", ")));
+        System.out.printf("\t\tcodes=[%s]%n", targetNode.getExclusions(nodeWalker::getNodesBySudoCode).map(OpsNode::getCode).collect(Collectors.joining("; ")));
+        System.out.printf("\t\tstrings=[%s]%n", String.join(", ", targetNode.getExclusionStrings()));
     }
 
     @SuppressWarnings("unused")
     private static void testIcd() {
         System.out.println("ICD-10-GM Test");
-        System.setProperty("dimdi.files.path", "/Users/yoshi/Library/Group Containers/G69SCX94XU.duck/Library/Application Support/duck/Volumes/IMI/Terminology-Resources/ICD-10-GM");
+        System.setProperty("dimdi.files.path", "Y:\\Terminology-Resources\\ICD-10-GM");
         IcdService icdService = IcdService.getService();
         IcdNodeFactory nodeFactory = icdService.getNodeFactory("icd10gm2004");
         IcdNodeWalker nodeWalker = nodeFactory.createNodeWalker();
         Scanner scanner = new Scanner(System.in);
         System.out.printf("\tLoaded version: %s%n", nodeFactory.getName());
-        //System.out.print("Code? ");
-        //String code = scanner.nextLine().trim();
         String code = "A02.2";
         SgmlIcdNode targetNode = (SgmlIcdNode) nodeWalker.getNodeByCode(code);
         if (targetNode == null) System.exit(1);
         System.out.printf("\tCode='%s', Display='%s'%n", targetNode.getCode(), targetNode.getLabel());
         System.out.printf("\tInclusions:%n");
-        System.out.printf("\t\tcodes=[%s]%n", String.join(", ", targetNode.getInclusionCodes()));
-        System.out.printf("\t\tstrings=[%s]%n", String.join(", ", targetNode.getInclusionStrings()));
+        System.out.printf("\t\tcodes=[%s]%n", String.join("; ", targetNode.getInclusionCodes()));
+        System.out.printf("\t\tstrings=[%s]%n", String.join("; ", targetNode.getInclusionStrings()));
         System.out.printf("\tExclusions:%n");
-        System.out.printf("\t\tcodes=[%s]%n", String.join(", ", targetNode.getExclusionCodes()));
-        System.out.printf("\t\tstrings=[%s]%n", String.join(", ", targetNode.getExclusionStrings()));
+        System.out.printf("\t\tcodes=[%s]%n", String.join("; ", targetNode.getExclusionCodes()));
+        System.out.printf("\t\tstrings=[%s]%n", String.join("; ", targetNode.getExclusionStrings()));
     }
 }

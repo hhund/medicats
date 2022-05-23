@@ -16,7 +16,7 @@ public class SgmlOpsNodeRoot extends SgmlOpsNode
 
 	public SgmlOpsNodeRoot(String version, PreviousCodeMappings mappings, String previousVersion)
 	{
-		super(null, null, "ROOT", "ROOT", OpsNodeType.ROOT, null, null);
+		super(null, null, "ROOT", "ROOT", OpsNodeType.ROOT, null, null, null, null);
 
 		this.version = version;
 		this.mappings = mappings;
